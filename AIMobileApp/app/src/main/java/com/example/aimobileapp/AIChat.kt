@@ -406,7 +406,7 @@ class AIChat : AppCompatActivity() {
 
         val request = Request.Builder()
             .url("https://api.openai.com/v1/chat/completions")
-            .addHeader("Authorization", "Bearer ")
+            .addHeader("Authorization", "Bearer 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")
             .post(requestBody)
             .build()
 

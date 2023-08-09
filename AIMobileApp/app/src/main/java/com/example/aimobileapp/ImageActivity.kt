@@ -15,7 +15,7 @@ class ImageActivity : AppCompatActivity() {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
-            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer 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").build()
+            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer ").build()
             chain.proceed(request)
         }
         .build()
