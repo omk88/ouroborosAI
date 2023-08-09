@@ -87,5 +87,6 @@ class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMes
 
         return view ?: inflater.inflate(R.layout.message_item, null)
     }
+
 }
 

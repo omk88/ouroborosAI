@@ -8,6 +8,7 @@
     android:background="#E7E7E7"
     android:fitsSystemWindows="true">
 
+
     <LinearLayout
         android:id="@+id/linearLayout22"
         android:layout_width="match_parent"
@@ -15,7 +16,9 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <RelativeLayout
             android:background="#E0E0E0"
@@ -40,7 +43,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_centerInParent="true">
+                android:layout_centerInParent="true"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <ImageView
                     android:src="@drawable/ouroboros"
@@ -85,6 +90,8 @@
 
         </RelativeLayout>
         <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:layout_weight="1"
             android:id="@+id/linearLayout20"
             android:layout_width="match_parent"
@@ -115,149 +122,219 @@
         </LinearLayout>
 
         <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="6dp">
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.3"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp">
+                android:padding="6dp">
 
                 <LinearLayout
-                    android:layout_gravity="center|bottom"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:visibility="visible"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/narrate"
+                        app:srcCompat="@drawable/microphone"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp" />
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:padding="7dp"
+                        android:layout_gravity="left"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/bin"
+                        app:srcCompat="@drawable/bin"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/narratedText"
+                    android:layout_weight="2"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="10"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp"
+                        android:maxEms="12"
+                        android:text="TEXTING"
+                        android:id="@+id/textVisual"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:clickable="true"
+                    android:visibility="gone"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/send"
+                    app:srcCompat="@drawable/send"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp" />
+
+
+                <LinearLayout
+                    android:weightSum="2.5"
+                    android:id="@+id/sendMessageContainer"
+                    android:visibility="visible"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
 
-                    <ImageView
-                        android:id="@+id/narrate"
-                        app:srcCompat="@drawable/microphone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_weight="2.2"
+                        android:id="@+id/sendMessageTextBox"
+                        android:visibility="visible"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingRight="3dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="9"
-                android:orientation="vertical"
-                android:paddingRight="3dp">
+                        <androidx.cardview.widget.CardView
+                            android:visibility="gone"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="5dp"
+                            android:gravity="left"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardBackgroundColor="#f5f7fa"
+                            app:cardCornerRadius="8dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:id="@+id/cardView">
 
-                <androidx.cardview.widget.CardView
-                    android:visibility="gone"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="left"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#f5f7fa"
-                    app:cardCornerRadius="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:id="@+id/cardView">
+                            <LinearLayout
+                                android:padding="8dp"
+                                android:layout_gravity="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_weight="10"
+                                    android:paddingLeft="5dp"
+                                    android:paddingRight="5dp"
+                                    android:paddingTop="3dp"
+                                    android:paddingBottom="3dp"
+                                    android:maxEms="12"
+                                    android:gravity="top"
+                                    android:text="Hello my name is user4 and I am interested in purchasing a car!"
+                                    android:id="@+id/replyText"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="12sp" />
+
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_gravity="center"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:padding="3dp"
+                                        android:id="@+id/close"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="15dp">
+                                    </ImageView>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <EditText
+                            android:layout_marginLeft="5dp"
+                            android:maxLines="7"
+                            android:inputType="textMultiLine"
+                            android:scrollbars="vertical"
+                            android:gravity="center_vertical"
+                            android:id="@+id/message"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edit_text_background"
+                            android:ems="5"
+                            android:fontFamily="@font/poppins_regular"
+                            android:hint="Message"
+                            android:textColorHint="#8036454F"
+                            android:paddingLeft="15dp"
+                            android:paddingTop="7.5dp"
+                            android:paddingBottom="5.5dp"
+                            android:textColor="#36454F"
+                            android:textCursorDrawable="@drawable/cursor_color"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toTopOf="@+id/editTextTextPassword2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.519"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </LinearLayout>
 
                     <LinearLayout
-                        android:padding="8dp"
-                        android:layout_gravity="center"
-                        android:layout_width="match_parent"
+                        android:layout_weight="0.3"
+                        android:gravity="right"
+                        android:id="@+id/sendMessageIcon"
+                        android:visibility="visible"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_weight="10"
-                            android:paddingLeft="5dp"
-                            android:paddingRight="5dp"
-                            android:paddingTop="3dp"
-                            android:paddingBottom="3dp"
-                            android:maxEms="12"
-                            android:gravity="top"
-                            android:text="Hello my name is user4 and I am interested in purchasing a car!"
-                            android:id="@+id/replyText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:textSize="12sp" />
-
                         <LinearLayout
-                            android:layout_weight="1"
-                            android:layout_gravity="center"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:clipChildren="false"
+                            android:clipToPadding="false"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical">
 
                             <ImageView
-                                android:padding="3dp"
-                                android:id="@+id/close"
-                                android:layout_width="match_parent"
-                                android:layout_height="15dp">
-                            </ImageView>
+                                android:clickable="true"
+                                android:visibility="visible"
+                                android:layout_gravity="right|bottom"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginLeft="5dp"
+                                android:id="@+id/sendMessage"
+                                app:srcCompat="@drawable/send"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp" />
                         </LinearLayout>
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <EditText
-                    android:layout_marginLeft="5dp"
-                    android:maxLines="7"
-                    android:inputType="textMultiLine"
-                    android:scrollbars="vertical"
-                    android:gravity="center_vertical"
-                    android:id="@+id/message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_background"
-                    android:ems="5"
-                    android:fontFamily="@font/poppins_regular"
-                    android:hint="Message"
-                    android:textColorHint="#8036454F"
-                    android:paddingLeft="15dp"
-                    android:paddingTop="7.5dp"
-                    android:paddingBottom="5.5dp"
-                    android:textColor="#36454F"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toTopOf="@+id/editTextTextPassword2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.519"
-                    app:layout_constraintStart_toStartOf="parent" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.3"
-                android:orientation="horizontal"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp">
-
-                <LinearLayout
-                    android:layout_gravity="center|bottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="33dp"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/sendMessage"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:background="@drawable/button_background"
-                        android:fontFamily="@font/poppins_regular"
-                        android:text=">"
-                        android:textColor="#36454F"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.519"
-                        app:layout_constraintStart_toStartOf="parent" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
