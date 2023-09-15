@@ -15,8 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -25,14 +23,23 @@ import java.util.*
 import kotlin.collections.ArrayList
 import android.Manifest
 import android.animation.*
+import android.app.ActivityManager
 import android.view.MotionEvent
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.util.concurrent.TimeUnit
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import okhttp3.*
 
 
 class AIChat : AppCompatActivity() {
@@ -41,10 +48,10 @@ class AIChat : AppCompatActivity() {
 
     private lateinit var adapter: MessageArrayAdapter
     private val listItems = ArrayList<ChatMessage>()
-    private val client = OkHttpClient()
-    private val conversationHistory = JSONArray()
+    private var conversationHistory = JSONArray()
     private lateinit var textView1: TextView
     private lateinit var textView2: TextView
+    private lateinit var backArrow: ImageView
     private lateinit var slideDown: Animation
     private lateinit var slideUp: Animation
     private var nextText: String? = null
@@ -56,7 +63,7 @@ class AIChat : AppCompatActivity() {
     private lateinit var recognisedText: String
     private lateinit var narrateImageView: ImageView
     private lateinit var conversationCode: String
-
+    private var apiKey: String? = null
 
 
     private var initialY = 0f
@@ -68,11 +75,62 @@ class AIChat : AppCompatActivity() {
 
         textView1 = findViewById(R.id.title)
         textView2 = findViewById(R.id.typing)
+        backArrow = findViewById(R.id.backArrow)
+
+        val generateImg = findViewById<ImageView>(R.id.generateImg)
+
+        generateImg.setOnClickListener {
+            val intent = Intent(this, ImageActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        }
+
+
+
+
         conversationCode = intent.getStringExtra("conversation").toString()
+        val newConversation = intent.getStringExtra("newConversation").toString()
+
+        val bin = findViewById<ImageView>(R.id.bin)
+        bin.setOnClickListener {
+
+            val narratedText = findViewById<LinearLayout>(R.id.narratedText)
+            val send = findViewById<ImageView>(R.id.send)
+            val sendMessageIcon = findViewById<LinearLayout>(R.id.sendMessageIcon)
+            val sendMessageTextBox = findViewById<LinearLayout>(R.id.sendMessageTextBox)
+            val sendMessageContainer = findViewById<LinearLayout>(R.id.sendMessageContainer)
+
+            sendMessageIcon.visibility = View.VISIBLE
+            sendMessageTextBox.visibility = View.VISIBLE
+            sendMessageContainer.visibility = View.VISIBLE
+
+            bin.visibility = View.GONE
+            narratedText.visibility = View.GONE
+            send.visibility = View.GONE
+
+            narrateImageView.alpha = 1f
+            narrateImageView.translationY = 0f
+
+            narrateImageView.visibility = View.VISIBLE
+
+            if (isListening) {
+                recognizer.stopListening()
+                isListening = false
+            }
+        }
+
+        backArrow.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        }
+
 
         val listView = findViewById<ListView>(R.id.messageList)
         adapter = MessageArrayAdapter(this, listItems)
         listView.adapter = adapter
+
+        loadCurrentConversation()
 
         val button = findViewById<ImageView>(R.id.sendMessage)
         val editText = findViewById<EditText>(R.id.message)
@@ -86,7 +144,7 @@ class AIChat : AppCompatActivity() {
             }
             pulse.cancel()
             narrateImageView.clearAnimation()
-            narrateImageView.translationY = 0f // This line resets the microphone's position
+            narrateImageView.translationY = 0f
             addItem(true)
 
             val sendMessageIcon = findViewById<LinearLayout>(R.id.sendMessageIcon)
@@ -107,7 +165,6 @@ class AIChat : AppCompatActivity() {
         }
 
 
-        // Request permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO)
         }
@@ -116,7 +173,6 @@ class AIChat : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.VIBRATE), REQUEST_VIBRATE)
         }
 
-        // Set up speech recognizer
         narrateImageView = findViewById(R.id.narrate)
         recognizer = SpeechRecognizer.createSpeechRecognizer(this)
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -126,7 +182,12 @@ class AIChat : AppCompatActivity() {
         val listener = object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() { isListening = true }
-            override fun onRmsChanged(rmsdB: Float) {}
+
+            override fun onRmsChanged(rmsdB: Float) {
+                val soundWave = findViewById<ProgressBar>(R.id.soundWave)
+                soundWave.progress = (rmsdB * 2).toInt()
+            }
+
             override fun onBufferReceived(buffer: ByteArray?) {}
             override fun onEndOfSpeech() {
                 isListening = false
@@ -184,7 +245,6 @@ class AIChat : AppCompatActivity() {
         narrateImageView.setOnTouchListener { v, event ->
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-            // Define AnimatorSet here to be used in ACTION_DOWN and ACTION_UP
             val scaleXUp = ObjectAnimator.ofFloat(narrateImageView, "scaleX", 1f, 1.2f)
             val scaleYUp = ObjectAnimator.ofFloat(narrateImageView, "scaleY", 1f, 1.2f)
             val scaleXDown = ObjectAnimator.ofFloat(narrateImageView, "scaleX", 1.2f, 1f)
@@ -204,7 +264,7 @@ class AIChat : AppCompatActivity() {
 
             pulse = AnimatorSet()
             pulse.play(scaleUpSet).before(scaleDownSet)
-            pulse.duration = 1000  // adjust to control the speed
+            pulse.duration = 1000
 
             pulse.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
@@ -223,30 +283,34 @@ class AIChat : AppCompatActivity() {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     initialY = event.rawY
-                    v.animate().scaleX(1.3f).scaleY(1.3f).setDuration(200).start() // increase the image size to 130%
+                    v.animate().scaleX(1.3f).scaleY(1.3f).setDuration(200).start()
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
                     val deltaY = initialY - event.rawY
-                    val maxDeltaY = resources.displayMetrics.heightPixels * 0.1f // 10% of screen height
+                    val maxDeltaY = resources.displayMetrics.heightPixels * 0.1f
 
                     if (deltaY > 0 && deltaY <= maxDeltaY) {
-                        // Only allow upward movement up to 30% of screen height
-                        v.translationY = -deltaY // Move the ImageView
+                        v.translationY = -deltaY
 
-                        // Start listening if not already doing so
+                        val fadeThreshold = 0.7 * maxDeltaY
+
+                        if (deltaY > fadeThreshold) {
+                            val remainingDistance = maxDeltaY - deltaY
+                            val alpha = remainingDistance / (maxDeltaY - fadeThreshold)
+                            v.alpha = alpha.toFloat()
+                        }
+
                         if (!isListening) {
                             recognizer.startListening(intent)
                         }
-
                     }
 
-                    // Vibrate and keep at maximum point if limit is reached
                     if (deltaY > maxDeltaY && v.translationY != -maxDeltaY) {
                         if (Build.VERSION.SDK_INT >= 26) {
+                            narrateImageView.visibility = View.GONE
                             vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
 
-                            // Start pulse animation
                             val sendMessageIcon = findViewById<LinearLayout>(R.id.sendMessageIcon)
                             val sendMessageTextBox = findViewById<LinearLayout>(R.id.sendMessageTextBox)
                             val sendMessageContainer = findViewById<LinearLayout>(R.id.sendMessageContainer)
@@ -265,60 +329,74 @@ class AIChat : AppCompatActivity() {
 
                         } else {
                             @Suppress("DEPRECATION")
-                            vibrator.vibrate(500) // Deprecated in API 26
+                            vibrator.vibrate(500)
 
-                            // Start pulse animation
                             if (!pulse.isStarted) {
                                 pulse.start()
                             }
                         }
-                        v.translationY = -maxDeltaY // Keep the ImageView at the maximum point
+                        v.translationY = -maxDeltaY
                     }
 
                     true
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    // Do not reset the ImageView position when the user lifts their finger
-                    // Instead, do it when the recognition is done
                     pulse.cancel()
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(200).start() // Reset the image size when the user lifts their finger
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(200).start()
                     true
                 }
                 else -> false
             }
         }
 
+        if (newConversation == "true") {
+            listItems.add(ChatMessage("Hi! I am your personal assistant, what can I help you with today?", true, false, true))
+            adapter.notifyDataSetChanged()
+        }
 
-        // Add first message
-        listItems.add(ChatMessage("Hi! I am your personal assistant, what can I help you with today?", true, false))
-        adapter.notifyDataSetChanged()
+
 
         button.setOnClickListener {
             addItem(false)
         }
     }
 
+    private fun isMainProcess(): Boolean {
+        return packageName == getCurrentProcessName()
+    }
+
+    private fun getCurrentProcessName(): String? {
+        return try {
+            val pid = android.os.Process.myPid()
+            val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            for (processInfo in manager.runningAppProcesses) {
+                if (processInfo.pid == pid) {
+                    return processInfo.processName
+                }
+            }
+            null
+        } catch (ignored: Exception) {
+            null
+        }
+    }
+
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_RECORD_AUDIO -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permission granted
                 } else {
-                    // Permission denied
                 }
                 return
             }
             REQUEST_VIBRATE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Vibrate permission granted
                 } else {
-                    // Vibrate permission denied
                 }
                 return
             }
             else -> {
-                // Ignore all other requests
             }
         }
     }
@@ -329,6 +407,29 @@ class AIChat : AppCompatActivity() {
         recognizer.destroy()
         pulse.cancel()
     }
+
+    private fun loadCurrentConversation() {
+        val conversations = loadConversations()
+        println("Loading current conversation for:" + conversationCode)
+        if (conversations.containsKey(conversationCode)) {
+            listItems.clear()
+            listItems.addAll(conversations[conversationCode]!!)
+
+            conversationHistory = JSONArray()
+            for (chatMessage in listItems) {
+                val message = JSONObject()
+                message.put("role", if (chatMessage.isBot) "assistant" else "user")
+                message.put("content", chatMessage.message)
+                conversationHistory.put(message)
+            }
+
+            adapter.notifyDataSetChanged()
+        }
+
+        println("Loaded messages:" + conversations[conversationCode]?.size)
+    }
+
+
 
     private fun addItem(voiceMessage: Boolean) {
         val editText = findViewById<EditText>(R.id.message)
@@ -342,8 +443,8 @@ class AIChat : AppCompatActivity() {
         editText.setText("")
         textView1.visibility = View.GONE
         textView2.visibility = View.VISIBLE
-        listItems.add(ChatMessage(text, false, false))
-        listItems.add(ChatMessage(text, false, true))
+        listItems.add(ChatMessage(text, false, false, false))
+        listItems.add(ChatMessage(text, false, true, false))
         saveCurrentConversation()
 
         adapter.notifyDataSetChanged()
@@ -376,8 +477,6 @@ class AIChat : AppCompatActivity() {
 
 
 
-
-
     fun loadConversations(): MutableMap<String, ArrayList<ChatMessage>> {
         val file = File(filesDir, "conversations.json")
         if (file.exists()) {
@@ -389,60 +488,73 @@ class AIChat : AppCompatActivity() {
         return mutableMapOf()
     }
 
+    private fun makeApiCall(text: String) {
+        FirebaseManager.getInstance().fetchApiKey { apiKey ->
+            if (apiKey != null) {
+                val json = JSONObject()
 
+                val userMessage = JSONObject()
+                userMessage.put("role", "user")
+                userMessage.put("content", text)
+                conversationHistory.put(userMessage)
 
-    private suspend fun makeApiCall(text: String) {
-        val json = JSONObject()
+                json.put("messages", conversationHistory)
+                json.put("model", "gpt-3.5-turbo")
+                json.put("max_tokens", 1000)
 
-        val userMessage = JSONObject()
-        userMessage.put("role", "user")
-        userMessage.put("content", text)
-        conversationHistory.put(userMessage)
+                val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
-        json.put("messages", conversationHistory)
-        json.put("model", "gpt-3.5-turbo")
+                val request = Request.Builder()
+                    .url("https://api.openai.com/v1/chat/completions")
+                    .addHeader("Authorization", "Bearer $apiKey")
+                    .post(requestBody)
+                    .build()
 
-        val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+                val client = OkHttpClient.Builder()
+                    .readTimeout(120, TimeUnit.SECONDS)
+                    .writeTimeout(120, TimeUnit.SECONDS)
+                    .connectTimeout(120, TimeUnit.SECONDS)
+                    .build()
 
-        val request = Request.Builder()
-            .url("https://api.openai.com/v1/chat/completions")
-            .addHeader("Authorization", "Bearer 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")
-            .post(requestBody)
-            .build()
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onResponse(call: Call, response: Response) {
+                        val responseBodyString = response.body?.string() ?: ""
+                        val responseData = JSONObject(responseBodyString)
+                        val responseText = responseData.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content")
 
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) {
-                println("Response: ${response.body?.string()}")
-                throw IOException("Unexpected code $response")
-            }
+                        val assistantMessage = JSONObject()
+                        assistantMessage.put("role", "assistant")
+                        assistantMessage.put("content", responseText)
+                        conversationHistory.put(assistantMessage)
 
-            val responseData = JSONObject(response.body!!.string())
-            val responseText = responseData.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content")
+                        runOnUiThread {
+                            listItems.removeAt(listItems.size - 1)
+                            adapter.notifyDataSetChanged()
+                            textView1.visibility = View.VISIBLE
+                            textView2.visibility = View.GONE
+                            listItems.add(ChatMessage(responseText, true, false, false))
+                            saveCurrentConversation()
+                            val content = loadConversations()
+                            println(content)
 
-            val assistantMessage = JSONObject()
-            assistantMessage.put("role", "assistant")
-            assistantMessage.put("content", responseText)
-            conversationHistory.put(assistantMessage)
+                            adapter.notifyDataSetChanged()
 
-            withContext(Dispatchers.Main) {
-                listItems.removeAt(listItems.size - 1)
-                adapter.notifyDataSetChanged()
-                textView1.visibility = View.VISIBLE
-                textView2.visibility = View.GONE
-                listItems.add(ChatMessage(responseText, true, false))
-                saveCurrentConversation()
-                val content = loadConversations()
-                println(content)
+                            val listView = findViewById<ListView>(R.id.messageList)
+                            listView.post {
+                                listView.smoothScrollToPosition(adapter.count - 1)
+                            }
+                        }
+                    }
 
-                adapter.notifyDataSetChanged()
-
-                val listView = findViewById<ListView>(R.id.messageList)
-                listView.post {
-                    listView.smoothScrollToPosition(adapter.count - 1)
-                }
+                    override fun onFailure(call: Call, e: IOException) {
+                    }
+                })
+            } else {
             }
         }
     }
+
+
 }
 
 

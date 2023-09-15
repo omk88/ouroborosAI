@@ -14,12 +14,15 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMessage>) :
     ArrayAdapter<ChatMessage>(context, 0, items) {
 
     override fun getViewTypeCount(): Int {
-        return 3 // Two types of views
+        return 3 // Three types of views
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -29,6 +32,19 @@ class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMes
             else -> 0 // user message
         }
     }
+
+    private fun formatTimestamp(timestamp: String): String {
+        try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            val date = inputFormat.parse(timestamp)
+            val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            return outputFormat.format(date!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return timestamp
+        }
+    }
+
 
     @SuppressLint("MissingInflatedId")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -60,10 +76,18 @@ class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMes
 
         if (viewType == 0 || viewType == 1) {
             val timeTextView = view?.findViewById<TextView>(R.id.timeStamp)
-            timeTextView?.text = item.timestamp
+            timeTextView?.text = formatTimestamp(item.timestamp)
         }
 
         if (viewType == 1) {
+            val copy = view?.findViewById<ImageView>(R.id.copy)
+            val share = view?.findViewById<ImageView>(R.id.share)
+
+            if (items[position].isFirstMessage) {
+                copy?.visibility = View.GONE
+                share?.visibility = View.GONE
+            }
+
             val imageView = view?.findViewById<ImageView>(R.id.copy)
             imageView?.setOnClickListener {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

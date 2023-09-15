@@ -34,13 +34,25 @@
         <LinearLayout
             android:layout_weight="1"
             android:padding="10sp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical">
 
+            <TextView
+                android:visibility="visible"
+                android:padding="45sp"
+                android:fontFamily="@font/poppins_regular"
+                android:id="@+id/instruction"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingRight="13dp"
+                android:text="@string/conversation_instruction"
+                android:textColor="#36454F"
+                android:textSize="17sp" />
+
             <ListView
+                android:visibility="gone"
                 android:listSelector="@android:color/transparent"
                 android:id="@+id/conversationList"
                 android:layout_width="match_parent"
@@ -55,7 +67,7 @@
             android:gravity="center"
             android:id="@+id/linearLayout23"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="45sp">
 
             <LinearLayout
                 android:id="@+id/button_start_activity"

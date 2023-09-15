@@ -63,6 +63,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/bin"
                 android:background="#80FF0000"
                 android:layout_gravity="right"
                 android:layout_width="30sp"

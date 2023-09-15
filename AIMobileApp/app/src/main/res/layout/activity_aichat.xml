@@ -90,8 +90,6 @@
 
         </RelativeLayout>
         <LinearLayout
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:layout_weight="1"
             android:id="@+id/linearLayout20"
             android:layout_width="match_parent"
@@ -137,6 +135,8 @@
                 android:padding="6dp">
 
                 <LinearLayout
+                    android:visibility="gone"
+                    android:layout_gravity="bottom"
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:layout_width="wrap_content"
@@ -172,23 +172,29 @@
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ProgressBar
+                        android:id="@+id/soundWave"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="10"/>
+
 
                     <TextView
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="#36454F"
                         android:gravity="center"
                         android:layout_gravity="bottom"
-                        android:layout_weight="10"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
+                        android:padding="10sp"
                         android:maxEms="12"
-                        android:text="TEXTING"
+                        android:text=""
                         android:id="@+id/textVisual"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -211,7 +217,7 @@
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
 
@@ -222,7 +228,7 @@
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingRight="3dp">
 
@@ -281,7 +287,7 @@
                         <EditText
                             android:layout_marginLeft="5dp"
                             android:maxLines="7"
-                            android:inputType="textMultiLine"
+                            android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
                             android:scrollbars="vertical"
                             android:gravity="center_vertical"
                             android:id="@+id/message"
@@ -295,6 +301,7 @@
                             android:paddingLeft="15dp"
                             android:paddingTop="7.5dp"
                             android:paddingBottom="5.5dp"
+                            android:paddingRight="7.5dp"
                             android:textColor="#36454F"
                             android:textCursorDrawable="@drawable/cursor_color"
                             android:textSize="15sp"
@@ -305,8 +312,9 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:layout_gravity="bottom"
                         android:layout_weight="0.3"
-                        android:gravity="right"
+                        android:gravity="bottom"
                         android:id="@+id/sendMessageIcon"
                         android:visibility="visible"
                         android:layout_width="0dp"

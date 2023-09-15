@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:gravity="bottom"
+            android:layout_weight="0.8"
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:paddingLeft="40sp"
+                android:paddingRight="40sp"
+                android:paddingTop="90sp"
+                android:layout_gravity="bottom"
+                android:id="@+id/anim_logo"
+                android:layout_width="match_parent"
+                android:layout_height="130sp"
+                android:src="@drawable/anim_logo" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:scaleType="centerCrop"
+            android:paddingLeft="200sp"
+            android:paddingRight="200sp"
+            android:paddingBottom="100sp"
+            android:layout_weight="0.5"
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ouroboros" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AI Mobile App</string>
+    <string name="app_name">Ouroboros AI</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -9,4 +9,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="prompt_instruction">Enter a prompt and hit \'generate\' to create an image. &lt;b&gt;For the best results, make it specific!&lt;/b&gt;</string>
+    <string name="conversation_instruction">Your saved conversations will appear here. Tap New Conversation to start one!</string>
+
 </resources>
