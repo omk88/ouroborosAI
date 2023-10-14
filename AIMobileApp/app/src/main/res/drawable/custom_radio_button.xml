@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected state -->
+    <item android:state_checked="true">
+        <layer-list>
+            <!-- Outer circle -->
+            <item>
+                <shape android:shape="oval">
+                    <size android:width="24dp" android:height="24dp"/>
+                    <solid android:color="#8036454F"/>
+                </shape>
+            </item>
+            <!-- Inner circle (dot) -->
+            <item android:left="6dp" android:right="6dp" android:top="6dp" android:bottom="6dp">
+                <shape android:shape="oval">
+                    <size android:width="12dp" android:height="12dp"/>
+                    <solid android:color="#8036454F"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Default state -->
+    <item>
+        <shape android:shape="oval">
+            <size android:width="24dp" android:height="24dp"/>
+            <stroke android:width="2dp" android:color="#8036454F"/>
+        </shape>
+    </item>
+</selector>

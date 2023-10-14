@@ -45,12 +45,12 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_regular"
                         android:text="06/08/2023"
-                        android:textSize="10sp" />
+                        android:textSize="10dp" />
 
                 </LinearLayout>
 
                 <TextView
-                    android:layout_marginTop="8sp"
+                    android:layout_marginTop="8dp"
                     android:maxEms="12"
                     android:textColor="#36454F"
                     android:fontFamily="@font/poppins_regular"
@@ -59,20 +59,20 @@
                     android:id="@+id/messageTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp" />
+                    android:textSize="14dp" />
 
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/bin"
                 android:background="#80FF0000"
                 android:layout_gravity="right"
-                android:layout_width="30sp"
-                android:layout_height="90sp"
+                android:layout_width="30dp"
+                android:layout_height="90dp"
                 android:orientation="vertical">
 
                 <ImageView
                     android:src="@drawable/bin"
-                    android:padding="7sp"
+                    android:padding="7dp"
                     android:id="@+id/logo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

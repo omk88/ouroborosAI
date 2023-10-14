@@ -8,12 +8,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:367867882103:android:e8ab7e1f616bdbda7c3472",
+        "mobilesdk_app_id": "1:367867882103:android:69b4530a767f9ee37c3472",
         "android_client_info": {
-          "package_name": "com.example.aimobileapp"
+          "package_name": "com.ouroboros.aimobileapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "367867882103-15op3tmcjtq740lp7dluvlg47129abdr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ouroboros.aimobileapp",
+            "certificate_hash": "adcad4c09dbf47d216722ed44fa16670800d0a82"
+          }
+        },
+        {
+          "client_id": "367867882103-g29k2au6fgrfvjbio3a5bhv51bf0lpqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDfUQTN4eps--UgHnjPbsUsSkhDjCswjxY"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367867882103-g29k2au6fgrfvjbio3a5bhv51bf0lpqo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

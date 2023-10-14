@@ -37,7 +37,7 @@
                 android:id="@+id/messageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="14dp" />
 
             <LinearLayout
                 android:layout_gravity="top|right"
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="17:24"
-                    android:textSize="10sp" />
+                    android:textSize="10dp" />
 
             </LinearLayout>
         </LinearLayout>

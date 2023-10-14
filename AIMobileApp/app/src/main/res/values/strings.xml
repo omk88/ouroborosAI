@@ -11,5 +11,6 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="prompt_instruction">Enter a prompt and hit \'generate\' to create an image. &lt;b&gt;For the best results, make it specific!&lt;/b&gt;</string>
     <string name="conversation_instruction">Your saved conversations will appear here. Tap New Conversation to start one!</string>
+    <string name="default_web_client_id">367867882103-g29k2au6fgrfvjbio3a5bhv51bf0lpqo.apps.googleusercontent.com</string>
 
 </resources>

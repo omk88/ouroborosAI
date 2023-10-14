@@ -7,8 +7,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.google.gms:google-services:4.3.10' // Google Services plugin
-        classpath 'com.android.tools.build:gradle:7.3.1'  // Android Gradle plugin
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20" // Kotlin Gradle plugin
+        classpath 'com.android.tools.build:gradle:8.1.1'  // Android Gradle plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10" // Kotlin Gradle plugin
     }
 }
 
@@ -24,3 +24,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+

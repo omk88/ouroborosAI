@@ -63,7 +63,7 @@
                     android:paddingRight="13dp"
                     android:text="Ouroboros AI"
                     android:textColor="#36454F"
-                    android:textSize="17sp" />
+                    android:textSize="17dp" />
 
                 <TextView
                     android:visibility="gone"
@@ -75,7 +75,7 @@
                     android:paddingRight="13dp"
                     android:text="Typing..."
                     android:textColor="#36454F"
-                    android:textSize="17sp" />
+                    android:textSize="17dp" />
 
             </LinearLayout>
 
@@ -188,13 +188,13 @@
                         android:textColor="#36454F"
                         android:gravity="center"
                         android:layout_gravity="bottom"
-                        android:padding="10sp"
+                        android:padding="10dp"
                         android:maxEms="12"
                         android:text=""
                         android:id="@+id/textVisual"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="15sp" />
+                        android:textSize="15dp" />
 
                 </LinearLayout>
 
@@ -265,7 +265,7 @@
                                     android:id="@+id/replyText"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:textSize="12sp" />
+                                    android:textSize="12dp" />
 
                                 <LinearLayout
                                     android:layout_weight="1"
@@ -304,7 +304,7 @@
                             android:paddingRight="7.5dp"
                             android:textColor="#36454F"
                             android:textCursorDrawable="@drawable/cursor_color"
-                            android:textSize="15sp"
+                            android:textSize="15dp"
                             app:layout_constraintBottom_toTopOf="@+id/editTextTextPassword2"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.519"

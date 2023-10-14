@@ -37,7 +37,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:gravity="top"
                 android:text="Hello my name is user4 and I am interested in purchasing a car!"
-                android:textSize="14sp" />
+                android:textSize="14dp" />
 
             <LinearLayout
                 android:layout_gravity="top|right"
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="17:24"
-                    android:textSize="10sp" />
+                    android:textSize="10dp" />
 
             </LinearLayout>
         </LinearLayout>

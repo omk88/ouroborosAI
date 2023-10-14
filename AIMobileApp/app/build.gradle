@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace 'com.example.aimobileapp'
+    namespace 'com.ouroboros.aimobileapp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.aimobileapp"
+        applicationId "com.ouroboros.aimobileapp"
         minSdk 21
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        targetSdk 33
+        versionCode 5
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,6 +37,15 @@ android {
 
 
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation 'com.google.firebase:firebase-firestore:23.0.3'
+    implementation 'com.android.billingclient:billing:6.0.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
+
+
+    implementation "com.android.billingclient:billing:6.0.1"
     implementation 'com.google.firebase:firebase-database:20.0.3'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -60,5 +69,24 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+
+gradle.projectsEvaluated {
+    tasks.withType(com.android.build.gradle.tasks.MergeResources) { task ->
+        task.dependsOn ':app:processDebugGoogleServices'
+    }
+
+    tasks.withType(com.android.build.gradle.tasks.GenerateResValues) { task ->
+        task.dependsOn ':app:processDebugGoogleServices'
+    }
+
+    tasks.withType(com.android.build.gradle.tasks.MergeResources) { mergeResourcesTask ->
+        mergeResourcesTask.dependsOn(processReleaseGoogleServices)
+    }
+    tasks.withType(com.android.build.gradle.tasks.MergeSourceSetFolders) { mergeSourceSetFoldersTask ->
+        mergeSourceSetFoldersTask.dependsOn(processReleaseGoogleServices)
+    }
+}
+
 
 

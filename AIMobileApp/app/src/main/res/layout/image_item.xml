@@ -9,9 +9,9 @@
 
     <LinearLayout
         android:layout_weight="1"
-        android:paddingLeft="10sp"
-        android:paddingRight="10sp"
-        android:paddingBottom="10sp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:layout_width="match_parent"
-            android:layout_height="160sp"
+            android:layout_height="160dp"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -36,9 +36,9 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_margin="40sp"
-                    android:layout_width="160sp"
-                    android:layout_height="160sp"
+                    android:layout_margin="40dp"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
                     android:orientation="horizontal">
 
                     <androidx.cardview.widget.CardView
@@ -69,9 +69,9 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_margin="40sp"
-                    android:layout_width="160sp"
-                    android:layout_height="160sp"
+                    android:layout_margin="40dp"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
                     android:orientation="horizontal">
 
                     <androidx.cardview.widget.CardView

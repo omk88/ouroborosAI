@@ -15,32 +15,50 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:gravity="center"
-            android:background="#E0E0E0"
-            android:id="@+id/linearLayout21"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
 
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:padding="7dp"
-                android:src="@drawable/ouroboros" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="#E0E0E0">
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentStart="true"
+
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="128dp"
+                    android:layout_marginEnd="129dp"
+                    android:layout_toStartOf="@+id/creditsText"
+                    android:padding="7dp"
+                    android:src="@drawable/ouroboros" />
+
+                <TextView
+                    android:fontFamily="@font/poppins_regular"
+                    android:id="@+id/creditsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:paddingEnd="30dp"
+                    android:text="CREDITS: 0"
+                    android:textColor="#36454F"
+                    android:textSize="14dp" />
+            </RelativeLayout>
+
 
         <LinearLayout
             android:layout_weight="1"
-            android:padding="10sp"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical">
 
             <TextView
                 android:visibility="visible"
-                android:padding="45sp"
+                android:padding="45dp"
                 android:fontFamily="@font/poppins_regular"
                 android:id="@+id/instruction"
                 android:layout_width="match_parent"
@@ -49,7 +67,7 @@
                 android:paddingRight="13dp"
                 android:text="@string/conversation_instruction"
                 android:textColor="#36454F"
-                android:textSize="17sp" />
+                android:textSize="17dp" />
 
             <ListView
                 android:visibility="gone"
@@ -67,7 +85,7 @@
             android:gravity="center"
             android:id="@+id/linearLayout23"
             android:layout_width="match_parent"
-            android:layout_height="45sp">
+            android:layout_height="45dp">
 
             <LinearLayout
                 android:id="@+id/button_start_activity"
@@ -93,7 +111,7 @@
                     android:paddingRight="13dp"
                     android:text="New Conversation"
                     android:textColor="#36454F"
-                    android:textSize="15sp" />
+                    android:textSize="15dp" />
 
             </LinearLayout>
 
@@ -103,7 +121,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_marginLeft="5sp"
+                    android:layout_marginLeft="5dp"
                     android:id="@+id/image"
                     android:layout_width="35dp"
                     android:layout_height="match_parent"
@@ -119,7 +137,7 @@
                     android:paddingRight="13dp"
                     android:text="Generate Image"
                     android:textColor="#36454F"
-                    android:textSize="15sp" />
+                    android:textSize="15dp" />
             </LinearLayout>
 
         </LinearLayout>

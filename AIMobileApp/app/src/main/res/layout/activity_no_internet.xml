@@ -17,28 +17,28 @@
         <ImageView
             android:layout_weight="1"
             android:src="@drawable/no_wifi"
-            android:paddingRight="20sp"
-            android:paddingLeft="20sp"
-            android:paddingTop="100sp"
-            android:paddingBottom="20sp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="100dp"
+            android:paddingBottom="20dp"
             android:id="@+id/noWifi"
             android:layout_width="match_parent"
-            android:layout_height="0sp" />
+            android:layout_height="0dp" />
 
         <TextView
             android:textStyle="bold"
             android:layout_weight="0.3"
             android:visibility="visible"
-            android:paddingRight="20sp"
-            android:paddingLeft="20sp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
             android:fontFamily="@font/poppins_regular"
             android:id="@+id/instruction"
             android:layout_width="match_parent"
-            android:layout_height="0sp"
+            android:layout_height="0dp"
             android:gravity="center"
             android:text="No internet connection"
             android:textColor="#E7E7E7"
-            android:textSize="27sp" />
+            android:textSize="27dp" />
 
         <TextView
             android:layout_weight="1"
@@ -46,23 +46,23 @@
             android:fontFamily="@font/poppins_regular"
             android:id="@+id/instruction2"
             android:layout_width="match_parent"
-            android:layout_height="0sp"
+            android:layout_height="0dp"
             android:gravity="center"
-            android:paddingRight="40sp"
-            android:paddingLeft="40sp"
-            android:paddingBottom="60sp"            android:text="We seem to have some difficulty connecting to the internet. Please ensure you have a reliable connection."
+            android:paddingRight="40dp"
+            android:paddingLeft="40dp"
+            android:paddingBottom="60dp"            android:text="We seem to have some difficulty connecting to the internet. Please ensure you have a reliable connection."
             android:textColor="#E7E7E7"
-            android:textSize="20sp" />
+            android:textSize="20dp" />
 
         <LinearLayout
             android:layout_weight="0.7"
-            android:paddingRight="20sp"
-            android:paddingLeft="20sp"
-            android:paddingTop="60sp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="60dp"
             android:gravity="center"
             android:id="@+id/linearLayout25"
             android:layout_width="match_parent"
-            android:layout_height="0sp">
+            android:layout_height="0dp">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/retry"
