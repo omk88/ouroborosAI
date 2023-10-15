@@ -1,18 +1,24 @@
 package com.ouroboros.aimobileapp
 
+import android.provider.Settings
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
+import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.PurchasesUpdatedListener
@@ -39,6 +45,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import java.lang.Math.abs
 import java.lang.reflect.Type
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -59,6 +66,15 @@ class ImageActivity: AppCompatActivity() {
     private lateinit var generateImageView: ImageView
     private lateinit var loadingImageView: ImageView
     private lateinit var generateExtraImagesLayout: View
+
+    private lateinit var indicator: View
+    private lateinit var topLayout: View
+
+    private var initialMargin = 0
+
+    private lateinit var parentLayout: LinearLayout
+    private var initialX = 0f
+    private var threshold = 100
 
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
@@ -85,10 +101,119 @@ class ImageActivity: AppCompatActivity() {
     private val service: DallEApiService = retrofit.create(DallEApiService::class.java)
 
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_generate_image)
+
+        val indicator = findViewById<View>(R.id.indicator)
+        val topLayout = findViewById<View>(R.id.topLayout)
+        val parentLayout = findViewById<View>(R.id.parentLayout)
+
+        val parentLayoutWidth = parentLayout.width.toFloat()
+
+        val initialIndicatorWidth = indicator.width
+        var initialX = indicator.x
+        var threshold = 0f // Initialize threshold to 0
+        val touchSlop = ViewConfiguration.get(this).scaledTouchSlop
+        var moved = false
+        var end = false
+        var clampedX = 0f
+
+        val text1 = findViewById<TextView>(R.id.text1)
+        val text2 = findViewById<TextView>(R.id.text2)
+
+        text1.text = Html.fromHtml("<b>DALL-E</b>")
+
+        text1.setOnClickListener {
+
+            indicator.animate().translationX(0f).duration = 200
+
+            clampedX = 0f
+
+
+            text1.text = Html.fromHtml("<font color='#36454F'><b>DALL-E</b></font>")
+            text2.text = Html.fromHtml("<font color='#8036454F'>MIDJOURNEY</font>")
+        }
+
+        text2.setOnClickListener {
+            end = true
+
+            val maxX = parentLayout.width / 2 - initialIndicatorWidth
+            indicator.animate().translationX(maxX.toFloat()).duration = 200
+
+            clampedX = maxX.toFloat()
+
+
+
+            text1.text = Html.fromHtml("<font color='#8036454F'>DALL-E</font>")
+            text2.text = Html.fromHtml("<font color='#36454F'><b>MIDJOURNEY</b></font>")
+        }
+
+
+
+        val normalTypeface = Typeface.defaultFromStyle(Typeface.NORMAL)
+        val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
+
+
+
+        topLayout.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (end) {
+                        initialX = (event.rawX + clampedX * 1.6).toFloat()
+                        end = false
+                    } else {
+                        initialX = event.rawX
+                    }
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val parentLayoutWidth = parentLayout.width
+                    val indicatorWidth = initialIndicatorWidth
+                    val newX = event.rawX
+                    val halfIndicatorWidth = indicatorWidth / 2
+
+                    val newPosX = initialX - newX - halfIndicatorWidth
+                    val maxX = parentLayoutWidth / 2
+
+                    val thresholdPercentage = 0.2
+                    threshold = ((parentLayoutWidth * thresholdPercentage).toFloat())
+
+                    clampedX = newPosX.coerceIn(0f, maxX.toFloat())
+
+                    indicator.translationX = clampedX
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (indicator.x >= threshold) {
+                        end = true
+
+                        text1.text = Html.fromHtml("<font color='#8036454F'>DALL-E</font>")
+                        text2.text = Html.fromHtml("<font color='#36454F'><b>MIDJOURNEY</b></font>")
+
+                        val maxX = parentLayout.width / 2 - initialIndicatorWidth
+                        indicator.animate()
+                            .translationX(maxX.toFloat())
+                            .duration = 200
+                    } else {
+                        text1.text = Html.fromHtml("<font color='#36454F'><b>DALL-E</b></font>")
+                        text2.text = Html.fromHtml("<font color='#8036454F'>MIDJOURNEY</font>")
+
+                        indicator.animate()
+                            .translationX(0f)
+                            .duration = 200
+                    }
+                }
+            }
+            true
+        }
+
+
+
+
+
+
+
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -215,6 +340,13 @@ class ImageActivity: AppCompatActivity() {
         }
 
         return apiKeyLocal ?: ""
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun toggleGravity() {
+        val newGravity = if (parentLayout.gravity == Gravity.START) Gravity.END else Gravity.START
+        parentLayout.gravity = newGravity
+        // You can add animation/transition code here for a smooth effect
     }
 
 

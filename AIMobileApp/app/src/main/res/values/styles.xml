@@ -17,4 +17,13 @@
 
     </style>
 
+    <style name="TextNormal">
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextBold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
 </resources>

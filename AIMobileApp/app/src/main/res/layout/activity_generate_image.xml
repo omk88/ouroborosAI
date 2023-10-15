@@ -10,6 +10,7 @@
 
 
     <LinearLayout
+        android:id="@+id/topLayout"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:layout_width="match_parent"
@@ -65,6 +66,58 @@
             </LinearLayout>
 
         </RelativeLayout>
+
+        <LinearLayout
+            android:background="#E0E0E0"
+            android:paddingTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_marginBottom="10dp"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textColor="#36454F"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:id="@+id/text1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="DALL-E" />
+
+                <TextView
+                    android:textColor="#36454F"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:id="@+id/text2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="MIDJOURNEY" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/parentLayout"
+                android:gravity="start"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/indicator"
+                    android:layout_height="match_parent"
+                    android:background="#A3B4FF" />
+            </LinearLayout>
+        </LinearLayout>
 
 
         <LinearLayout
