@@ -79,7 +79,30 @@
 
             </LinearLayout>
 
+            <TextView
+                android:fontFamily="@font/poppins_regular"
+                android:id="@+id/changeGptText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:paddingEnd="30dp"
+                android:text="GPT-3"
+                android:textColor="#36454F"
+                android:textSize="14dp" />
+
             <ImageView
+                android:clickable="false"
+                android:src="@drawable/arrow"
+                android:rotation="90"
+                android:padding="13dp"
+                android:id="@+id/changeGPT"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true" />
+
+            <ImageView
+                android:visibility="gone"
                 android:src="@drawable/image"
                 android:scaleX="-1"
                 android:padding="13dp"

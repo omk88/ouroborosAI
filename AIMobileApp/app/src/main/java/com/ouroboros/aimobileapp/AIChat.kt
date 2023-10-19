@@ -83,6 +83,12 @@ class AIChat : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(com.ouroboros.aimobileapp.R.layout.activity_aichat)
 
+        val textView: TextView = findViewById(R.id.changeGptText)
+
+        textView.setOnClickListener {
+            showDropDownMenu(it)
+        }
+
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
@@ -412,6 +418,25 @@ class AIChat : AppCompatActivity() {
         } catch (ignored: Exception) {
             null
         }
+    }
+
+    private fun showDropDownMenu(anchor: View) {
+        val popupMenu = PopupMenu(this, anchor)
+        popupMenu.inflate(R.menu.textview_dropdown_menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_option1 -> {
+                    // Handle option 1 click
+                    true
+                }
+                R.id.action_option2 -> {
+                    // Handle option 2 click
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 
 
