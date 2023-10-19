@@ -76,6 +76,9 @@ class ImageActivity: AppCompatActivity() {
     private var imageUrls = mutableListOf<String>()
     private var imageUrls2 = mutableListOf<String>()
     private var isRequestInProgress = false
+    private var isRequestInProgress1 = false
+    private var requestCount = 0
+
     private lateinit var backArrow: ImageView
     private var lastTotalItemCount = 0
     private var openAIApiKey: String? = null
@@ -83,11 +86,18 @@ class ImageActivity: AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private var flag = false
+    private var flag1 = false
+    private var flag2 = false
+
     private lateinit var generateImageView: ImageView
+    private lateinit var generateImageView1: ImageView
     private lateinit var loadingImageView: ImageView
+    private lateinit var loadingImageView1: ImageView
     private lateinit var generateExtraImagesLayout: View
+    private lateinit var generateExtraImagesLayout1: View
     private var generationType = 1
 
+    private var newImageUrls1 = mutableListOf<String>()
     private var newImageUrls = mutableListOf<String>()
 
 
@@ -114,7 +124,9 @@ class ImageActivity: AppCompatActivity() {
                 openAIApiKey = getOpenAIApiKeySynchronously()
             }
 
-            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer $openAIApiKey").build()
+            val request =
+                chain.request().newBuilder().addHeader("Authorization", "Bearer $openAIApiKey")
+                    .build()
             chain.proceed(request)
         }
         .connectTimeout(120, TimeUnit.SECONDS)
@@ -132,21 +144,16 @@ class ImageActivity: AppCompatActivity() {
         .create()
 
 
-
-
-
     private val client2 = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("bearer", "vk-RVQzGWGi0L3gOuGClbXqALG59xkD8jD8FDjkR5PdLSs6s")
+                .addHeader("bearer", "vk-4fQRmq8Fixbh71esBl4pxLNo9MObS204Qxxd2Q6an32SDwm")
                 .build()
             chain.proceed(request)
         }
         .connectTimeout(120, TimeUnit.SECONDS)
         .readTimeout(120, TimeUnit.SECONDS)
         .build()
-
-
 
 
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -165,7 +172,6 @@ class ImageActivity: AppCompatActivity() {
     private val service2: ImagineApiService = retrofit2.create(ImagineApiService::class.java)
 
 
-
     @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,7 +179,6 @@ class ImageActivity: AppCompatActivity() {
         setContentView(R.layout.activity_generate_image)
 
         instruction = findViewById(R.id.instruction)
-
 
 
         val indicator = findViewById<View>(R.id.indicator)
@@ -203,6 +208,13 @@ class ImageActivity: AppCompatActivity() {
 
         instruction = findViewById(R.id.instruction)
 
+        adapter = ImageItemAdapter(this, imageUrls)
+        adapter2 = ImageItemAdapter(this, imageUrls2)
+
+        listView1.adapter = adapter
+        listView2.adapter = adapter2
+
+
 
         text1.setOnClickListener {
 
@@ -220,11 +232,14 @@ class ImageActivity: AppCompatActivity() {
             if (!loadFlag2) {
                 loadImageUrls()
 
-                if (imageUrls.isNotEmpty()) {
+                if (newImageUrls.isNotEmpty()) {
+
+                    Log.d("HEREE", imageUrls.toString())
 
                     loadFlag2 = true
 
-                    adapter2.notifyDataSetChanged()
+                    imageUrls.addAll(newImageUrls)
+                    adapter.notifyDataSetChanged()
 
                     listView1.visibility = View.VISIBLE
                     listView2.visibility = View.GONE
@@ -232,25 +247,35 @@ class ImageActivity: AppCompatActivity() {
 
 
 
-                    loadPromptHint2()?.let {
-                        promptEditText.hint = it
+                    loadPromptHint1()?.let {
+                        if ((it != "") || (it != null)) {
+
+                            promptEditText.hint = it
+                        } else {
+                            promptEditText.hint = "Prompt"
+                        }
                     }
+
                 } else if (!imageUrls.isNotEmpty()) {
                     listView1.visibility = View.GONE
                     listView2.visibility = View.GONE
                     instruction.visibility = View.VISIBLE
+                    promptEditText.hint = "Prompt"
                 }
-            }  else if (loadFlag2) {
+            } else if (loadFlag2) {
                 listView1.visibility = View.VISIBLE
                 listView2.visibility = View.GONE
                 instruction.visibility = View.GONE
 
-                loadPromptHint2()?.let {
-                    promptEditText.hint = it
+                loadPromptHint1()?.let {
+                    if ((it != "") || (it != null)) {
+
+                        promptEditText.hint = it
+                    } else {
+                        promptEditText.hint = "Prompt"
+                    }
                 }
             }
-
-
 
 
         }
@@ -274,33 +299,48 @@ class ImageActivity: AppCompatActivity() {
             if (!loadFlag) {
                 loadImageUrls2()
 
-                if (newImageUrls.isNotEmpty()) {
+                Log.d("URLSS", newImageUrls1.toString())
+
+                if (newImageUrls1.isNotEmpty()) {
 
                     loadFlag = true
 
-                    imageUrls2.addAll(newImageUrls)
-                    adapter.notifyDataSetChanged()
+                    imageUrls2.addAll(newImageUrls1)
+
+                    Log.d("COUNT3", newImageUrls1.toString())
+
+                    adapter2.notifyDataSetChanged()
 
                     listView1.visibility = View.GONE
                     listView2.visibility = View.VISIBLE
                     instruction.visibility = View.GONE
 
 
-                    loadPromptHint1()?.let {
-                        promptEditText.hint = it
+                    loadPromptHint2()?.let {
+                        if ((it != "") || (it != null)) {
+                            promptEditText.hint = it
+                        } else {
+                            promptEditText.hint = "Prompt"
+                        }
                     }
-                } else if (!newImageUrls.isNotEmpty()) {
+                } else if (!newImageUrls1.isNotEmpty()) {
                     listView1.visibility = View.GONE
                     listView2.visibility = View.GONE
                     instruction.visibility = View.VISIBLE
+                    promptEditText.hint = "Prompt"
                 }
             } else if (loadFlag) {
                 listView1.visibility = View.GONE
                 listView2.visibility = View.VISIBLE
                 instruction.visibility = View.GONE
 
-                loadPromptHint1()?.let {
-                    promptEditText.hint = it
+                loadPromptHint2()?.let {
+                    if ((it != "") || (it != null)) {
+
+                        promptEditText.hint = it
+                    } else {
+                        promptEditText.hint = "Prompt"
+                    }
                 }
             }
         }
@@ -337,15 +377,23 @@ class ImageActivity: AppCompatActivity() {
             .load(R.drawable.loading)
             .into(gifImageView2)
 
-        loadImageUrls()
 
-        loadPromptHint2()?.let {
-            promptEditText.hint = it
+        loadPromptHint1()?.let {
+            if ((it != "") || (it != null)) {
+
+                promptEditText.hint = it
+            } else {
+                promptEditText.hint = "Prompt"
+            }
         }
 
 
+        loadImageUrls()
 
-        if (imageUrls.isNotEmpty()) {
+        if (newImageUrls.isNotEmpty()) {
+            imageUrls.addAll(newImageUrls)
+            adapter.notifyDataSetChanged()
+            loadFlag2 = true
             Log.d("AAAAA", "OOOO")
             val imageListView: ListView = findViewById(R.id.imageListView)
             imageListView.visibility = View.VISIBLE
@@ -360,18 +408,11 @@ class ImageActivity: AppCompatActivity() {
         }
 
 
-        adapter = ImageItemAdapter(this, imageUrls)
-        adapter2 = ImageItemAdapter(this, imageUrls2)
-        val listView: ListView = findViewById(R.id.imageListView)
-        val listView2: ListView = findViewById(R.id.imageListView2)
-
-        listView.adapter = adapter
-        listView2.adapter = adapter2
-
         val titleTextView: TextView = findViewById(R.id.instruction)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            titleTextView.text = Html.fromHtml(getString(R.string.prompt_instruction), Html.FROM_HTML_MODE_LEGACY)
+            titleTextView.text =
+                Html.fromHtml(getString(R.string.prompt_instruction), Html.FROM_HTML_MODE_LEGACY)
         } else {
             titleTextView.text = Html.fromHtml(getString(R.string.prompt_instruction))
         }
@@ -381,6 +422,7 @@ class ImageActivity: AppCompatActivity() {
         val largeLoading: ImageView = findViewById(R.id.largeLoading)
 
         generateButton.setOnClickListener {
+
 
             val promptText = promptEditText.text.toString().trim()
 
@@ -396,17 +438,20 @@ class ImageActivity: AppCompatActivity() {
                     savePromptHint2(promptText)
                 }
 
-                if (imageUrls.isNotEmpty()) {
+                if (imageUrls.isNotEmpty() && generationType == 1) {
                     println("NOT EMPTY")
                     imageUrls.clear()
                     saveImageUrls()
                 }
 
-                if (newImageUrls.isNotEmpty()) {
+                if (generationType == 2) {
                     Log.d("DONSS", "SAVEDDD")
-                    newImageUrls.clear()
+                    imageUrls2.clear()
                     saveImageUrls2()
                 }
+
+
+
 
 
                 val imageListView: ListView = findViewById(R.id.imageListView)
@@ -421,10 +466,18 @@ class ImageActivity: AppCompatActivity() {
                 promptEditText.setText("")
 
                 if (generationType == 1) {
+                    imageUrls.clear()
+                    newImageUrls.clear()
+
                     requestImagesFromAPI(promptText, 4)
-                } else if (generationType == 2) {
-                    requestImagesFromAPI2(promptText)
                     adapter.notifyDataSetChanged()
+                } else if (generationType == 2) {
+
+                    imageUrls2.clear()
+                    newImageUrls1.clear()
+
+                    requestImagesFromAPI2(promptText)
+                    adapter2.notifyDataSetChanged()
                 }
 
             } else {
@@ -459,8 +512,6 @@ class ImageActivity: AppCompatActivity() {
     }
 
 
-
-
     private fun savePromptHint1(hint: String) {
         val sharedPreferences = getSharedPreferences("appPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -476,9 +527,11 @@ class ImageActivity: AppCompatActivity() {
     }
 
 
-
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             1001 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -491,6 +544,7 @@ class ImageActivity: AppCompatActivity() {
     }
 
     private fun saveImageUrls() {
+        Log.d("SAVEDDD", "SAVEDDD")
         val sharedPreferences = getSharedPreferences("imageUrls", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = Gson()
@@ -500,11 +554,10 @@ class ImageActivity: AppCompatActivity() {
     }
 
     private fun saveImageUrls2() {
-        Log.d("SAVEDD", "SAVVY")
         val sharedPreferences = getSharedPreferences("imageUrls2", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = Gson()
-        val json = gson.toJson(newImageUrls)
+        val json = gson.toJson(imageUrls2)
         editor.putString("imageList2", json)
         editor.apply()
     }
@@ -527,30 +580,26 @@ class ImageActivity: AppCompatActivity() {
     }
 
 
-
-
-
     private fun loadImageUrls() {
         val sharedPreferences = getSharedPreferences("imageUrls", Context.MODE_PRIVATE)
         val gson = Gson()
         val json = sharedPreferences.getString("imageList", null)
         val type: Type = object : TypeToken<MutableList<String>>() {}.type
         val tempList = gson.fromJson<MutableList<String>>(json, type)
-        if(tempList != null) {
-            imageUrls = tempList
+        if (tempList != null) {
+            newImageUrls = tempList
         }
 
     }
 
     private fun loadImageUrls2() {
-        Log.d("LARGEE", "LARGO")
         val sharedPreferences = getSharedPreferences("imageUrls2", Context.MODE_PRIVATE)
         val gson = Gson()
         val json = sharedPreferences.getString("imageList2", null)
         val type: Type = object : TypeToken<MutableList<String>>() {}.type
         val tempList = gson.fromJson<MutableList<String>>(json, type)
-        if(tempList != null) {
-            newImageUrls = tempList
+        if (tempList != null) {
+            newImageUrls1 = tempList
         }
 
     }
@@ -587,8 +636,6 @@ class ImageActivity: AppCompatActivity() {
     }
 
 
-
-
     private fun userHasSubscription(callback: (Boolean) -> Unit) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -599,7 +646,8 @@ class ImageActivity: AppCompatActivity() {
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         val subscriptionId = documentSnapshot.getString("subscriptionId")
-                        val hasSubscription = subscriptionId == "monthly" || subscriptionId == "yearly"
+                        val hasSubscription =
+                            subscriptionId == "monthly" || subscriptionId == "yearly"
                         callback(hasSubscription)
                     } else {
                         callback(false)
@@ -670,36 +718,51 @@ class ImageActivity: AppCompatActivity() {
 
                                     val requests = List(4) {
 
-                                        val request = ImageCreationRequest(prompt, count / 4, "512x512")
+                                        val request =
+                                            ImageCreationRequest(prompt, count / 4, "512x512")
                                         service.createImage(request)
                                     }
 
                                     val deferreds = requests.map { it.enqueueToDeferred() }
 
+                                    Log.d("YESS", "YAYA")
+
                                     CoroutineScope(Dispatchers.Main).launch {
                                         try {
                                             val responses = deferreds.awaitAll()
 
-                                            val newImageUrls = responses.flatMap {
-                                                it.body()?.data?.map { image -> image.url } ?: emptyList()
-                                            }
+                                            Log.d("YESS", "YAYA1")
 
-                                            var imageListView: ListView = findViewById(R.id.imageListView)
-                                            val largeLoading: ImageView = findViewById(R.id.largeLoading)
+
+                                            newImageUrls = responses.flatMap {
+                                                it.body()?.data?.map { image -> image.url }
+                                                    ?: emptyList()
+                                            }.toMutableList()
+
+                                            var imageListView: ListView =
+                                                findViewById(R.id.imageListView)
+                                            val largeLoading: ImageView =
+                                                findViewById(R.id.largeLoading)
 
                                             if (newImageUrls.isNotEmpty()) {
+
+                                                Log.d("YESS", "YAYA22")
+
+
                                                 largeLoading.visibility = View.GONE
                                                 imageListView.visibility = View.VISIBLE
                                                 instruction.visibility = View.GONE
                                                 imageUrls.addAll(newImageUrls)
-                                                adapter2.notifyDataSetChanged()
+                                                adapter.notifyDataSetChanged()
+                                                loadFlag2 = true
 
 
-                                                if (!flag) {
-                                                    generateExtraImagesLayout = layoutInflater.inflate(R.layout.generate_extra_images, null)
+                                                saveImageUrls()
+
+
+                                                if (!flag) { generateExtraImagesLayout = layoutInflater.inflate(R.layout.generate_extra_images, null)
                                                     generateImageView = generateExtraImagesLayout.findViewById<ImageView>(R.id.gen)
                                                     loadingImageView = generateExtraImagesLayout.findViewById<ImageView>(R.id.loading)
-
                                                     imageListView.addFooterView(generateExtraImagesLayout)
 
                                                     flag = true
@@ -707,6 +770,7 @@ class ImageActivity: AppCompatActivity() {
 
 
                                                 val gifImageView = generateExtraImagesLayout.findViewById<ImageView>(R.id.loading)
+
                                                 Glide.with(this@ImageActivity)
                                                     .asGif()
                                                     .load(R.drawable.loading)
@@ -722,7 +786,8 @@ class ImageActivity: AppCompatActivity() {
                                                 }
 
 
-                                            } else { }
+                                            } else {
+                                            }
 
 
                                             isRequestInProgress = false
@@ -733,7 +798,6 @@ class ImageActivity: AppCompatActivity() {
                                             loadingLayout.visibility = View.GONE
                                         }
 
-                                        saveImageUrls()
                                     }
 
                                     println("SUCCESSS")
@@ -778,17 +842,34 @@ class ImageActivity: AppCompatActivity() {
                                     Log.d("HAVE CREDITS", "HAVE CREDITS")
 
                                     val loadingLayout = findViewById<ImageView>(R.id.loading)
-                                    if (isRequestInProgress) return@addOnSuccessListener
+                                    if (isRequestInProgress1) return@addOnSuccessListener
 
-                                    isRequestInProgress = true
+                                    isRequestInProgress1 = true
 
                                     val requests = List(4) {
-                                        val modelVersion = RequestBody.create("text/plain".toMediaTypeOrNull(), "1")
-                                        val promptPart = RequestBody.create("text/plain".toMediaTypeOrNull(), prompt)
-                                        val styleId = RequestBody.create("text/plain".toMediaTypeOrNull(), "30")
-                                        val highResResults = RequestBody.create("text/plain".toMediaTypeOrNull(), "1")
+                                        val modelVersion = RequestBody.create(
+                                            "text/plain".toMediaTypeOrNull(),
+                                            "1"
+                                        )
+                                        val promptPart = RequestBody.create(
+                                            "text/plain".toMediaTypeOrNull(),
+                                            prompt
+                                        )
+                                        val styleId = RequestBody.create(
+                                            "text/plain".toMediaTypeOrNull(),
+                                            "30"
+                                        )
+                                        val highResResults = RequestBody.create(
+                                            "text/plain".toMediaTypeOrNull(),
+                                            "1"
+                                        )
 
-                                        service2.createImage(modelVersion, promptPart, styleId, highResResults)
+                                        service2.createImage(
+                                            modelVersion,
+                                            promptPart,
+                                            styleId,
+                                            highResResults
+                                        )
                                     }
 
 
@@ -797,26 +878,28 @@ class ImageActivity: AppCompatActivity() {
 
                                     requests.forEach { call ->
                                         call.enqueue(object : Callback<ResponseBody> {
-                                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                            override fun onResponse(
+                                                call: Call<ResponseBody>,
+                                                response: Response<ResponseBody>
+                                            ) {
                                                 val imageBytes = response.body()?.bytes()
-                                                val imagePath = saveBitmapToFile(imageBytes, this@ImageActivity)
+                                                val imagePath =
+                                                    saveBitmapToFile(imageBytes, this@ImageActivity)
 
-                                                Log.d("REPONSEE", response.toString())
-                                                Log.d("REPONSEE", response.body().toString())
-
-                                                // Update newImageUrls
                                                 if (imagePath != null) {
-                                                    newImageUrls.add(imagePath)
+                                                    newImageUrls1.add(imagePath)
                                                 }
 
-                                                // If all images are processed, update the ListView
-                                                if (newImageUrls.size == requests.size) {
-                                                    updateListViewWithNewImages()
+                                                if (newImageUrls1.size == requests.size) {
+                                                    updateListViewWithNewImages(prompt)
                                                 }
                                             }
 
-                                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                                                Log.d("FAILL","API call failed: ${t.message}")
+                                            override fun onFailure(
+                                                call: Call<ResponseBody>,
+                                                t: Throwable
+                                            ) {
+                                                Log.d("FAILL", "API call failed: ${t.message}")
                                             }
                                         })
                                     }
@@ -824,46 +907,27 @@ class ImageActivity: AppCompatActivity() {
                                     var imageListView: ListView = findViewById(R.id.imageListView2)
                                     val largeLoading: ImageView = findViewById(R.id.largeLoading)
 
-                                    if (newImageUrls.isNotEmpty()) {
+                                    if (newImageUrls1.isNotEmpty()) {
 
-
+                                        Log.d("INSIDE", "INSIDE")
 
                                         largeLoading.visibility = View.GONE
                                         imageListView.visibility = View.VISIBLE
                                         instruction.visibility = View.GONE
-                                        imageUrls2.addAll(newImageUrls)
-                                        adapter.notifyDataSetChanged()
+                                        imageUrls2.addAll(newImageUrls1)
+                                        adapter2.notifyDataSetChanged()
 
-                                        if (!flag) {
-                                            generateExtraImagesLayout = layoutInflater.inflate(R.layout.generate_extra_images, null)
-                                            generateImageView = generateExtraImagesLayout.findViewById<ImageView>(R.id.gen)
-                                            loadingImageView = generateExtraImagesLayout.findViewById<ImageView>(R.id.loading)
+                                        Log.d("COUNT1", newImageUrls1.toString())
 
-                                            imageListView.addFooterView(generateExtraImagesLayout)
+                                        saveImageUrls2()
 
-                                            flag = true
-                                        }
 
-                                        val gifImageView = generateExtraImagesLayout.findViewById<ImageView>(R.id.loading)
-                                        Glide.with(this@ImageActivity)
-                                            .asGif()
-                                            .load(R.drawable.loading)
-                                            .into(gifImageView)
-
-                                        generateImageView.visibility = View.VISIBLE
-                                        loadingImageView.visibility = View.GONE
-
-                                        generateImageView.setOnClickListener {
-                                            requestImagesFromAPI2(prompt)
-                                            generateImageView.visibility = View.GONE
-                                            loadingImageView.visibility = View.VISIBLE
-                                        }
 
 
                                     }
 
-                                    isRequestInProgress = false
-                                    loadingLayout.visibility = View.GONE
+                                    isRequestInProgress1 = false
+                                    //loadingLayout.visibility = View.GONE
 
                                     println("SUCCESSS")
                                     println("Credits decremented successfully")
@@ -912,46 +976,91 @@ class ImageActivity: AppCompatActivity() {
         return file.absolutePath
     }
 
-    fun updateListViewWithNewImages() {
+    fun updateListViewWithNewImages(prompt: String) {
 
-        Log.d("CALLEDDD11", "CALLEDDD11")
+        if (newImageUrls1.isNotEmpty()) {
 
-        if (newImageUrls.isNotEmpty()) {
+            var imageListView: ListView = findViewById(R.id.imageListView2)
+
+
 
             loadFlag = true
 
-            saveImageUrls2()
+            imageUrls2.addAll(newImageUrls1)
 
-            Log.d("EMPTYY ", "CALLEDDD11")
-            imageUrls2.addAll(newImageUrls)
-            adapter.notifyDataSetChanged()
+            Log.d("COUNT2", newImageUrls1.toString())
 
-            // UI updates
+
+            adapter2.notifyDataSetChanged()
+
+
+
+
+            if (!flag1) {
+
+                generateExtraImagesLayout1 = layoutInflater.inflate(R.layout.generate_extra_images, null)
+                generateImageView1 = generateExtraImagesLayout1.findViewById<ImageView>(R.id.gen)
+                loadingImageView1 = generateExtraImagesLayout1.findViewById<ImageView>(R.id.loading)
+
+                imageListView.addFooterView(generateExtraImagesLayout1)
+
+                flag1 = true
+            }
+
+            val gifImageView1 = generateExtraImagesLayout1.findViewById<ImageView>(R.id.loading)
+            Glide.with(this@ImageActivity)
+                .asGif()
+                .load(R.drawable.loading)
+                .into(gifImageView1)
+
+            generateImageView1.visibility = View.VISIBLE
+            loadingImageView1.visibility = View.GONE
+
+
+            requestCount++
+
+            if (requestCount == 4) {
+                requestCount = 0
+            }
+
+            generateImageView1.setOnClickListener {
+                requestImagesFromAPI2(prompt)
+                generateImageView1.visibility = View.GONE
+                loadingImageView1.visibility = View.VISIBLE
+                flag2 = true
+
+            }
+
             val largeLoading: ImageView = findViewById(R.id.largeLoading)
-            val imageListView: ListView = findViewById(R.id.imageListView2)
 
             largeLoading.visibility = View.GONE
             imageListView.visibility = View.VISIBLE
             instruction.visibility = View.GONE
 
-            // Clear newImageUrls for any subsequent API calls
-            newImageUrls.clear()
+            saveImageUrls2()
+
+            if (!flag2) {
+                newImageUrls1.clear()
+                flag2 = false
+            }
+
+
         }
     }
+}
 
 
 
 
 
-    private fun Call<ImageCreationResponse>.enqueueToDeferred() = CompletableDeferred<Response<ImageCreationResponse>>().apply {
-        enqueue(object : Callback<ImageCreationResponse> {
-            override fun onResponse(call: Call<ImageCreationResponse>, response: Response<ImageCreationResponse>) {
-                complete(response)
-            }
-            override fun onFailure(call: Call<ImageCreationResponse>, t: Throwable) {
-            }
-        })
-    }
+private fun Call<ImageCreationResponse>.enqueueToDeferred() = CompletableDeferred<Response<ImageCreationResponse>>().apply {
+    enqueue(object : Callback<ImageCreationResponse> {
+        override fun onResponse(call: Call<ImageCreationResponse>, response: Response<ImageCreationResponse>) {
+            complete(response)
+        }
+        override fun onFailure(call: Call<ImageCreationResponse>, t: Throwable) {
+        }
+    })
 }
 
 
