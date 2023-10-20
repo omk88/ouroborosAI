@@ -30,6 +30,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -73,6 +74,7 @@ class AIChat : AppCompatActivity() {
     private var apiKey: String? = null
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+    private var checkedItem = 0
 
 
 
@@ -86,7 +88,21 @@ class AIChat : AppCompatActivity() {
         val textView: TextView = findViewById(R.id.changeGptText)
 
         textView.setOnClickListener {
-            showDropDownMenu(it)
+
+            val tempChecked = checkedItem
+
+            showRadioGroupMenu()
+
+            if (checkedItem != tempChecked) {
+                val intent = Intent(this, AIChat::class.java)
+
+                intent.putExtra("GPT", checkedItem)
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                startActivity(intent)
+                finish()
+            }
         }
 
         auth = FirebaseAuth.getInstance()
@@ -420,23 +436,20 @@ class AIChat : AppCompatActivity() {
         }
     }
 
-    private fun showDropDownMenu(anchor: View) {
-        val popupMenu = PopupMenu(this, anchor)
-        popupMenu.inflate(R.menu.textview_dropdown_menu)
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_option1 -> {
-                    // Handle option 1 click
-                    true
-                }
-                R.id.action_option2 -> {
-                    // Handle option 2 click
-                    true
-                }
-                else -> false
+    private fun showRadioGroupMenu() {
+        val items = arrayOf("GPT-3.5", "GPT-4")
+
+        AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
+            .setTitle("Style")
+            .setSingleChoiceItems(items, checkedItem) { dialog, which ->
+                checkedItem = which
             }
-        }
-        popupMenu.show()
+            .setPositiveButton("OK") { dialog, _ ->
+                Toast.makeText(this, "Selected: ${items[checkedItem]}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
 

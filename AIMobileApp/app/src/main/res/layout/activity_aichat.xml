@@ -80,6 +80,7 @@
             </LinearLayout>
 
             <TextView
+                android:visibility="gone"
                 android:fontFamily="@font/poppins_regular"
                 android:id="@+id/changeGptText"
                 android:layout_width="wrap_content"
@@ -92,6 +93,7 @@
                 android:textSize="14dp" />
 
             <ImageView
+                android:visibility="gone"
                 android:clickable="false"
                 android:src="@drawable/arrow"
                 android:rotation="90"
@@ -102,7 +104,7 @@
                 android:layout_alignParentEnd="true" />
 
             <ImageView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:src="@drawable/image"
                 android:scaleX="-1"
                 android:padding="13dp"

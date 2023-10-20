@@ -25,5 +25,16 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">#36454F</item>
+
+        <item name="android:background">#E0E0E0</item>
+
+        <item name="colorAccent">#A3B4FF</item>
+
+        <item name="android:colorButtonNormal">#36454F</item>
+
+    </style>
+
 
 </resources>

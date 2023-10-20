@@ -239,7 +239,7 @@ class ImageActivity: AppCompatActivity() {
 
 
             text1.text = Html.fromHtml("<font color='#36454F'><b>DALL-E</b></font>")
-            text2.text = Html.fromHtml("<font color='#8036454F'>MIDJOURNEY</font>")
+            text2.text = Html.fromHtml("<font color='#8036454F'>IMAGINE</font>")
 
             if (!loadFlag2) {
                 loadImageUrls()
@@ -306,7 +306,7 @@ class ImageActivity: AppCompatActivity() {
 
 
             text1.text = Html.fromHtml("<font color='#8036454F'>DALL-E</font>")
-            text2.text = Html.fromHtml("<font color='#36454F'><b>MIDJOURNEY</b></font>")
+            text2.text = Html.fromHtml("<font color='#36454F'><b>IMAGINE</b></font>")
 
 
             generationType = 2
@@ -528,7 +528,7 @@ class ImageActivity: AppCompatActivity() {
     private fun showRadioGroupMenu() {
         val items = arrayOf("Imagine V5", "Anime V5", "Imagine V4.1", "Imagine V4(Creative)", "Imagine V4", "Imagine V3", "Imagine V1", "Realistic", "Anime", "Portrait", "SDXL 1.0")
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
             .setTitle("Style")
             .setSingleChoiceItems(items, checkedItem) { dialog, which ->
                 checkedItem = which
