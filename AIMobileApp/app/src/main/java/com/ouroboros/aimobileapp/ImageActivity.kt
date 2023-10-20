@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.PurchasesUpdatedListener
@@ -117,6 +118,10 @@ class ImageActivity: AppCompatActivity() {
     private var loadFlag = false
     private var loadFlag2 = false
 
+    private lateinit var styleLayout: LinearLayout
+
+    private var checkedItem = 0
+
 
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
@@ -133,11 +138,6 @@ class ImageActivity: AppCompatActivity() {
         .readTimeout(120, TimeUnit.SECONDS)
         .build()
 
-    val requestBody = MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
-        .addFormDataPart("model_version", "1")
-        .addFormDataPart("style_id", "30")
-        .build()
 
     val gson = GsonBuilder()
         .setLenient()
@@ -151,8 +151,8 @@ class ImageActivity: AppCompatActivity() {
                 .build()
             chain.proceed(request)
         }
-        .connectTimeout(120, TimeUnit.SECONDS)
-        .readTimeout(120, TimeUnit.SECONDS)
+        .connectTimeout(240, TimeUnit.SECONDS)
+        .readTimeout(240, TimeUnit.SECONDS)
         .build()
 
 
@@ -179,6 +179,16 @@ class ImageActivity: AppCompatActivity() {
         setContentView(R.layout.activity_generate_image)
 
         instruction = findViewById(R.id.instruction)
+
+        styleLayout = findViewById(R.id.styleLayout)
+        styleLayout.visibility = View.GONE
+
+        styleLayout.setOnClickListener {
+            showRadioGroupMenu()
+        }
+
+
+
 
 
         val indicator = findViewById<View>(R.id.indicator)
@@ -217,6 +227,8 @@ class ImageActivity: AppCompatActivity() {
 
 
         text1.setOnClickListener {
+
+            styleLayout.visibility = View.GONE
 
             generationType = 1
 
@@ -281,6 +293,9 @@ class ImageActivity: AppCompatActivity() {
         }
 
         text2.setOnClickListener {
+
+            styleLayout.visibility = View.VISIBLE
+
             end = true
 
             val maxX = parentLayout.width / 2 - initialIndicatorWidth
@@ -508,7 +523,22 @@ class ImageActivity: AppCompatActivity() {
     private fun toggleGravity() {
         val newGravity = if (parentLayout.gravity == Gravity.START) Gravity.END else Gravity.START
         parentLayout.gravity = newGravity
-        // You can add animation/transition code here for a smooth effect
+    }
+
+    private fun showRadioGroupMenu() {
+        val items = arrayOf("Imagine V5", "Anime V5", "Imagine V4.1", "Imagine V4(Creative)", "Imagine V4", "Imagine V3", "Imagine V1", "Realistic", "Anime", "Portrait", "SDXL 1.0")
+
+        AlertDialog.Builder(this)
+            .setTitle("Style")
+            .setSingleChoiceItems(items, checkedItem) { dialog, which ->
+                checkedItem = which
+            }
+            .setPositiveButton("OK") { dialog, _ ->
+                Toast.makeText(this, "Selected: ${items[checkedItem]}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
 
@@ -855,14 +885,74 @@ class ImageActivity: AppCompatActivity() {
                                             "text/plain".toMediaTypeOrNull(),
                                             prompt
                                         )
-                                        val styleId = RequestBody.create(
-                                            "text/plain".toMediaTypeOrNull(),
-                                            "30"
-                                        )
+
                                         val highResResults = RequestBody.create(
                                             "text/plain".toMediaTypeOrNull(),
                                             "1"
                                         )
+
+
+                                        var styleId = RequestBody.create(
+                                            "text/plain".toMediaTypeOrNull(),
+                                            "33"
+                                        )
+
+                                        if (checkedItem == 0) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "33"
+                                            )
+                                        } else if (checkedItem == 1) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "34"
+                                            )
+                                        } else if (checkedItem == 2) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "32"
+                                            )
+                                        } else if (checkedItem == 3) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "31"
+                                            )
+                                        } else if (checkedItem == 4) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "30"
+                                            )
+                                        } else if (checkedItem == 5) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "28"
+                                            )
+                                        } else if (checkedItem == 6) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "27"
+                                            )
+                                        } else if (checkedItem == 7) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "29"
+                                            )
+                                        } else if (checkedItem == 8) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "21"
+                                            )
+                                        } else if (checkedItem == 9) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "26"
+                                            )
+                                        } else if (checkedItem == 10) {
+                                            styleId = RequestBody.create(
+                                                "text/plain".toMediaTypeOrNull(),
+                                                "122"
+                                            )
+                                        }
 
                                         service2.createImage(
                                             modelVersion,
