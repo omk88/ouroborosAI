@@ -34,6 +34,27 @@ class FirebaseManager private constructor() {
         })
     }
 
+    fun fetchApiKey2(callback: (String?) -> Unit) {
+        if (apiKey != null) {
+            callback(apiKey)
+            return
+        }
+
+        val database = FirebaseDatabase.getInstance()
+        val apiKeyRef = database.getReference("api-keys/a3D7b9H2z4X8Y5W1/key2")
+
+        apiKeyRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                apiKey = dataSnapshot.getValue(String::class.java)
+                callback(apiKey)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                callback(null)
+            }
+        })
+    }
+
     companion object {
         @Volatile
         private var instance: FirebaseManager? = null

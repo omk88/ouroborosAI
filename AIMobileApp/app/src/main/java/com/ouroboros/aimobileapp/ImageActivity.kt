@@ -83,6 +83,7 @@ class ImageActivity: AppCompatActivity() {
     private lateinit var backArrow: ImageView
     private var lastTotalItemCount = 0
     private var openAIApiKey: String? = null
+    private var openAIApiKey2: String? = null
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -146,14 +147,19 @@ class ImageActivity: AppCompatActivity() {
 
     private val client2 = OkHttpClient.Builder()
         .addInterceptor { chain ->
+            if (openAIApiKey2 == null) {
+                openAIApiKey2 = getOpenAIApiKeySynchronously2()
+            }
+
             val request = chain.request().newBuilder()
-                .addHeader("bearer", "vk-4fQRmq8Fixbh71esBl4pxLNo9MObS204Qxxd2Q6an32SDwm")
+                .addHeader("bearer", openAIApiKey2 ?: "")
                 .build()
             chain.proceed(request)
         }
         .connectTimeout(240, TimeUnit.SECONDS)
         .readTimeout(240, TimeUnit.SECONDS)
         .build()
+
 
 
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -506,6 +512,24 @@ class ImageActivity: AppCompatActivity() {
         val latch = CountDownLatch(1)
 
         FirebaseManager.getInstance().fetchApiKey { apiKey ->
+            apiKeyLocal = apiKey
+            latch.countDown()
+        }
+
+        try {
+            latch.await()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+        return apiKeyLocal ?: ""
+    }
+
+    private fun getOpenAIApiKeySynchronously2(): String {
+        var apiKeyLocal: String? = null
+        val latch = CountDownLatch(1)
+
+        FirebaseManager.getInstance().fetchApiKey2 { apiKey ->
             apiKeyLocal = apiKey
             latch.countDown()
         }
