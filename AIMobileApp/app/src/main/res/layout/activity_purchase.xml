@@ -125,11 +125,10 @@
             android:textSize="23dp" />
 
         <TextView
-            android:layout_weight="0.2"
+            android:layout_weight="0.1"
             android:visibility="visible"
             android:paddingRight="20dp"
             android:paddingLeft="20dp"
-            android:paddingBottom="20dp"
             android:fontFamily="@font/poppins_regular"
             android:id="@+id/upgrade"
             android:layout_width="match_parent"
@@ -142,7 +141,7 @@
 
     <LinearLayout
         android:weightSum="2"
-        android:layout_weight="1.7"
+        android:layout_weight="1.6"
         android:paddingRight="40dp"
         android:paddingLeft="40dp"
         android:gravity="center"
@@ -279,12 +278,12 @@
         </LinearLayout>
 
         <RadioGroup
+            android:layout_marginTop="20dp"
             android:id="@+id/radioGroup"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="40dp"
             android:gravity="center"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:layout_width="match_parent"
             android:layout_height="0dp" >
 
@@ -305,7 +304,7 @@
                     android:id="@+id/monthly"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Billed Monthly\n£11.99/month" />
+                    android:text="Billed Monthly\n£9.49/month" />
             </LinearLayout>
 
             <LinearLayout
@@ -324,13 +323,14 @@
                     android:id="@+id/yearly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Billed Yearly\n£149/year" />
+                    android:text="Billed Yearly\n£114.99/year" />
             </LinearLayout>
         </RadioGroup>
     </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="0.30"
+            android:orientation="vertical"
+            android:layout_weight="0.65"
             android:paddingRight="20dp"
             android:paddingLeft="20dp"
             android:gravity="center"
@@ -346,12 +346,91 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <LinearLayout
+                android:visibility="visible"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:id="@+id/reviewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_marginBottom="15dp"
+                    android:weightSum="3"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:id="@+id/linearLayout18"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:layout_marginStart="40dp"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="#36454F" />
+
+                    <TextView
+                        android:layout_weight="0.4"
+                        android:visibility="visible"
+                        android:fontFamily="@font/poppins_regular"
+                        android:id="@+id/orText"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:gravity="center"
+                        android:text="OR"
+                        android:textColor="#36454F"
+                        android:textSize="14dp" />
+
+                    <View
+                        android:layout_marginEnd="40dp"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="#36454F" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:id="@+id/linearLayout10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        android:fontFamily="@font/poppins_regular"
+                        android:id="@+id/reviewText"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:gravity="center"
+                        android:text="ADD A REVIEW FOR 10 FREE CREDITS"
+                        android:textColor="#36454F"
+                        android:textSize="14dp" />
+
+                    <ImageView
+                        android:layout_gravity="end"
+                        android:src="@drawable/arrow"
+                        android:padding="5dp"
+                        android:id="@+id/exit1"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
         <TextView
             android:layout_weight="0.1"
-            android:visibility="visible"
+            android:visibility="gone"
             android:fontFamily="@font/poppins_regular"
             android:id="@+id/point"
             android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 package com.ouroboros.aimobileapp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -29,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
@@ -57,6 +59,44 @@ class PurchaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_purchase)
+
+        val reviewLayout = findViewById<LinearLayout>(R.id.reviewLayout)
+
+
+
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+        val hasLeftReview = sharedPreferences.getBoolean("hasLeftReview", false)
+        if (!hasLeftReview) {
+            reviewLayout.visibility = View.VISIBLE
+        } else {
+            reviewLayout.visibility = View.GONE
+        }
+
+
+
+        reviewLayout.setOnClickListener {
+            val userUid = auth.currentUser?.uid
+            val reviewManager = ReviewManagerFactory.create(this)
+            val requestReviewFlow = reviewManager.requestReviewFlow()
+            requestReviewFlow.addOnCompleteListener { request ->
+                if (request.isSuccessful) {
+                    if (userUid != null) {
+                        getUserCredits2(userUid)
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean("hasLeftReview", true)
+                        editor.apply()
+
+                    }
+                    val reviewInfo = request.result
+                    val flow = reviewManager.launchReviewFlow(this, reviewInfo)
+                    flow.addOnCompleteListener { _ ->
+
+                    }
+                } else {
+                }
+            }
+        }
 
         val monthlyRadioButton = findViewById<RadioButton>(R.id.monthly)
         val yearlyRadioButton = findViewById<RadioButton>(R.id.yearly)
@@ -331,6 +371,18 @@ class PurchaseActivity : AppCompatActivity() {
             }
     }
 
+    private fun getUserCredits2(userUid: String) {
+        val userDocRef = db.collection("users").document(userUid)
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                val currentCredits = document.getLong("credits") ?: 0
+                updateCredits2(userUid, currentCredits)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error getting document", e)
+            }
+    }
+
     private fun updateCredits(userUid: String, currentCredits: Long, purchase: Purchase, subscriptionId: String) {
         val userDocRef = db.collection("users").document(userUid)
 
@@ -385,6 +437,42 @@ class PurchaseActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Log.e("Firestore", "Error getting document", e)
+            }
+    }
+
+    private fun updateCredits2(userUid: String, currentCredits: Long) {
+        val userDocRef = db.collection("users").document(userUid)
+
+        var creditsToAdd = 10
+
+        userDocRef.update("credits", currentCredits + creditsToAdd)
+            .addOnSuccessListener {
+                runOnUiThread {
+                    val purchaseLayout = findViewById<LinearLayout>(R.id.purchaseLayout)
+
+                    loadingLayout.visibility = View.GONE
+                    purchaseLayout.visibility = View.GONE
+
+                    val gifImageView = findViewById<ImageView>(R.id.coins)
+                    Glide.with(this)
+                        .asGif()
+                        .load(R.drawable.coins)
+                        .into(gifImageView)
+
+                    val purchasedLayout = findViewById<LinearLayout>(R.id.purchasedLayout)
+                    purchasedLayout.visibility = View.VISIBLE
+
+                    val delayMillis: Long = 3000
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                    }, delayMillis)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error updating credits", e)
             }
     }
 

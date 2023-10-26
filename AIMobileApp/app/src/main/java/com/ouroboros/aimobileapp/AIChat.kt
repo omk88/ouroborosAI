@@ -34,6 +34,7 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
@@ -663,7 +664,57 @@ class AIChat : AppCompatActivity() {
         }
     }
 
+    fun showReviewDialog() {
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
+        builder.setTitle("Rate our app")
+        builder.setMessage("If you enjoy using our app, please take a moment to rate it. Thanks for your support!")
+
+        builder.setPositiveButton("Rate now") { dialog, _ ->
+            launchInAppReview()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Later") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.setNeutralButton("No, thanks") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    fun launchInAppReview() {
+        val reviewManager = ReviewManagerFactory.create(this)
+        val requestReviewFlow = reviewManager.requestReviewFlow()
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+
+        requestReviewFlow.addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                val reviewInfo = request.result
+                val flow = reviewManager.launchReviewFlow(this, reviewInfo)
+                flow.addOnCompleteListener { _ ->
+                    val editor = sharedPreferences.edit()
+                    editor.putBoolean("hasLeftReview", true)
+                    editor.apply()
+                }
+            } else {
+            }
+        }
+    }
+
     private fun makeApiCall(text: String) {
+
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+        val currentValue = sharedPreferences.getInt("APIRequests", 0)
+        val incrementedValue = currentValue + 1
+
+        var requestsFlag = false
+
         if (auth.currentUser != null) {
             println("NOT NULL")
             val docRef = db.collection("users").document(auth.currentUser!!.uid)
@@ -681,6 +732,19 @@ class AIChat : AppCompatActivity() {
                             println("HAVE CREDITS")
                             docRef.update("credits", FieldValue.increment(-1))
                                 .addOnSuccessListener {
+
+                                    if (!requestsFlag) {
+                                        val editor = sharedPreferences.edit()
+                                        editor.putInt("APIRequests", incrementedValue)
+                                        editor.apply()
+
+                                        if (incrementedValue == 2) {
+                                            showReviewDialog()
+                                        }
+
+                                        requestsFlag = true
+                                    }
+
                                     com.ouroboros.aimobileapp.FirebaseManager.Companion.getInstance()
                                         .fetchApiKey { apiKey ->
                                         if (apiKey != null) {

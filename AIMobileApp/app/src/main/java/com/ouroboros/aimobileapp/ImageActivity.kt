@@ -35,6 +35,7 @@ import com.bumptech.glide.request.RequestListener
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -744,8 +745,58 @@ class ImageActivity: AppCompatActivity() {
         }
     }
 
+    fun showReviewDialog() {
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
+        builder.setTitle("Rate our app")
+        builder.setMessage("If you enjoy using our app, please take a moment to rate it. Thanks for your support!")
+
+        builder.setPositiveButton("Rate now") { dialog, _ ->
+            launchInAppReview()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Later") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.setNeutralButton("No, thanks") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    fun launchInAppReview() {
+        val reviewManager = ReviewManagerFactory.create(this)
+        val requestReviewFlow = reviewManager.requestReviewFlow()
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+
+        requestReviewFlow.addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                val reviewInfo = request.result
+                val flow = reviewManager.launchReviewFlow(this, reviewInfo)
+                flow.addOnCompleteListener { _ ->
+                    val editor = sharedPreferences.edit()
+                    editor.putBoolean("hasLeftReview", true)
+                    editor.apply()
+                }
+            } else {
+            }
+        }
+    }
+
     @SuppressLint("MissingInflatedId")
     private fun requestImagesFromAPI(prompt: String, count: Int) {
+
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+        val currentValue = sharedPreferences.getInt("APIRequests", 0)
+        val incrementedValue = currentValue + 1
+
+        var requestsFlag = false
+
 
         if (auth.currentUser != null) {
             println("NOT NULL")
@@ -773,7 +824,7 @@ class ImageActivity: AppCompatActivity() {
                                     val requests = List(4) {
 
                                         val request =
-                                            ImageCreationRequest(prompt, count / 4, "512x512")
+                                            ImageCreationRequest(prompt, count / 4, "1024x1024")
                                         service.createImage(request)
                                     }
 
@@ -799,6 +850,20 @@ class ImageActivity: AppCompatActivity() {
                                                 findViewById(R.id.largeLoading)
 
                                             if (newImageUrls.isNotEmpty()) {
+
+
+                                                if (!requestsFlag) {
+                                                    val editor = sharedPreferences.edit()
+                                                    editor.putInt("APIRequests", incrementedValue)
+                                                    editor.apply()
+
+                                                    if (incrementedValue == 2) {
+                                                        showReviewDialog()
+                                                    }
+
+                                                    requestsFlag = true
+                                                }
+
 
                                                 Log.d("YESS", "YAYA22")
 
@@ -877,6 +942,14 @@ class ImageActivity: AppCompatActivity() {
 
     @SuppressLint("MissingInflatedId")
     private fun requestImagesFromAPI2(prompt: String) {
+
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+        val currentValue = sharedPreferences.getInt("APIRequests", 0)
+        val incrementedValue = currentValue + 1
+
+        var requestsFlag = false
+
         if (auth.currentUser != null) {
             Log.d("NOT NULL", "NOT NULL")
             val docRef = db.collection("users").document(auth.currentUser!!.uid)
@@ -899,6 +972,18 @@ class ImageActivity: AppCompatActivity() {
                                     if (isRequestInProgress1) return@addOnSuccessListener
 
                                     isRequestInProgress1 = true
+
+                                    if (!requestsFlag) {
+                                        val editor = sharedPreferences.edit()
+                                        editor.putInt("APIRequests", incrementedValue)
+                                        editor.apply()
+
+                                        if (incrementedValue == 2) {
+                                            showReviewDialog()
+                                        }
+
+                                        requestsFlag = true
+                                    }
 
                                     val requests = List(4) {
                                         val modelVersion = RequestBody.create(

@@ -2,10 +2,12 @@ package com.ouroboros.aimobileapp
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
@@ -35,6 +37,8 @@ import okhttp3.Request
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import com.google.android.play.core.review.ReviewManagerFactory
+
 
 
 class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemoveListener {
@@ -69,6 +73,7 @@ class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         val userCredits = loadCreditsFromFile(this)
         if (userCredits != null) {
@@ -177,6 +182,10 @@ class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemo
             connectBillingClient()
         }
     }
+
+
+
+
 
     private fun connectBillingClient() {
         billingClient.startConnection(object : BillingClientStateListener {
