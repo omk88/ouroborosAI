@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -61,6 +62,7 @@ class PurchaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_purchase)
 
         val reviewLayout = findViewById<LinearLayout>(R.id.reviewLayout)
+        val point = findViewById<TextView>(R.id.point)
 
 
 
@@ -69,8 +71,10 @@ class PurchaseActivity : AppCompatActivity() {
         val hasLeftReview = sharedPreferences.getBoolean("hasLeftReview", false)
         if (!hasLeftReview) {
             reviewLayout.visibility = View.VISIBLE
+            point.visibility = View.GONE
         } else {
             reviewLayout.visibility = View.GONE
+            point.visibility = View.VISIBLE
         }
 
 
@@ -81,22 +85,23 @@ class PurchaseActivity : AppCompatActivity() {
             val requestReviewFlow = reviewManager.requestReviewFlow()
             requestReviewFlow.addOnCompleteListener { request ->
                 if (request.isSuccessful) {
-                    if (userUid != null) {
-                        getUserCredits2(userUid)
-                        val editor = sharedPreferences.edit()
-                        editor.putBoolean("hasLeftReview", true)
-                        editor.apply()
-
-                    }
                     val reviewInfo = request.result
                     val flow = reviewManager.launchReviewFlow(this, reviewInfo)
                     flow.addOnCompleteListener { _ ->
-
+                        if (userUid != null) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                getUserCredits2(userUid)
+                                val editor = sharedPreferences.edit()
+                                editor.putBoolean("hasLeftReview", true)
+                                editor.apply()
+                            }, 7000)
+                        }
                     }
                 } else {
                 }
             }
         }
+
 
         val monthlyRadioButton = findViewById<RadioButton>(R.id.monthly)
         val yearlyRadioButton = findViewById<RadioButton>(R.id.yearly)

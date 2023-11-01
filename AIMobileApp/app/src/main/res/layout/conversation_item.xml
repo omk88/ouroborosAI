@@ -15,7 +15,7 @@
         <androidx.cardview.widget.CardView
             android:gravity="left"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="8dp"
             app:cardBackgroundColor="#e4e6e9"
             app:cardCornerRadius="8dp"
@@ -50,6 +50,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:maxLines="2"
                     android:layout_marginTop="8dp"
                     android:maxEms="12"
                     android:textColor="#36454F"
@@ -58,7 +59,7 @@
                     android:text="Hello my name is user4 and I am interested in purchasing a car!"
                     android:id="@+id/messageTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textSize="14dp" />
 
             </LinearLayout>

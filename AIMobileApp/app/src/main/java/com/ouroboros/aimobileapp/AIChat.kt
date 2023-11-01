@@ -77,6 +77,14 @@ class AIChat : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var checkedItem = 0
 
+    private val PREFERENCES_NAME = "user_prefs"
+    private val SELECTED_CHOICE_KEY = "selected_choice_key"
+
+
+    private val sharedPreferences by lazy {
+        getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
+
 
 
     private var initialY = 0f
@@ -85,6 +93,9 @@ class AIChat : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.ouroboros.aimobileapp.R.layout.activity_aichat)
+
+        checkedItem = sharedPreferences.getInt(SELECTED_CHOICE_KEY, 0)
+
 
         val textView: TextView = findViewById(R.id.changeGptText)
 
@@ -403,6 +414,8 @@ class AIChat : AppCompatActivity() {
             listItems.add(
                 com.ouroboros.aimobileapp.ChatMessage(
                     "Hi! I am your personal assistant, what can I help you with today?",
+                    false,
+                    false,
                     true,
                     false,
                     true
@@ -440,12 +453,18 @@ class AIChat : AppCompatActivity() {
     private fun showRadioGroupMenu() {
         val items = arrayOf("GPT-3.5", "GPT-4")
 
+        // Load the saved choice from SharedPreferences
+        checkedItem = sharedPreferences.getInt(SELECTED_CHOICE_KEY, 0) // Default to 0 if not found
+
         AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
             .setTitle("Style")
-            .setSingleChoiceItems(items, checkedItem) { dialog, which ->
+            .setSingleChoiceItems(items, checkedItem) { _, which ->
                 checkedItem = which
             }
             .setPositiveButton("OK") { dialog, _ ->
+                // Save the selected choice to SharedPreferences
+                sharedPreferences.edit().putInt(SELECTED_CHOICE_KEY, checkedItem).apply()
+
                 Toast.makeText(this, "Selected: ${items[checkedItem]}", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
@@ -514,11 +533,6 @@ class AIChat : AppCompatActivity() {
     }
 
 
-
-
-
-
-
     private fun addItem(voiceMessage: Boolean) {
         val editText = findViewById<EditText>(com.ouroboros.aimobileapp.R.id.message)
         var text = ""
@@ -531,8 +545,8 @@ class AIChat : AppCompatActivity() {
         editText.setText("")
         textView1.visibility = View.GONE
         textView2.visibility = View.VISIBLE
-        listItems.add(com.ouroboros.aimobileapp.ChatMessage(text, false, false, false))
-        listItems.add(com.ouroboros.aimobileapp.ChatMessage(text, false, true, false))
+        listItems.add(com.ouroboros.aimobileapp.ChatMessage(text, false, false, false, false, false))
+        listItems.add(com.ouroboros.aimobileapp.ChatMessage(text, false, false, false, true, false))
         saveCurrentConversation()
 
         adapter.notifyDataSetChanged()
@@ -675,6 +689,11 @@ class AIChat : AppCompatActivity() {
         }
 
         builder.setNegativeButton("Later") { dialog, _ ->
+            val currentTimeMillis = System.currentTimeMillis()
+            val editor = sharedPreferences.edit()
+            editor.putLong("ReviewLaterTime", currentTimeMillis)
+            editor.putBoolean("ReviewLater", true)
+            editor.apply()
             dialog.dismiss()
         }
 
@@ -685,6 +704,7 @@ class AIChat : AppCompatActivity() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+
 
     fun launchInAppReview() {
         val reviewManager = ReviewManagerFactory.create(this)
@@ -738,8 +758,35 @@ class AIChat : AppCompatActivity() {
                                         editor.putInt("APIRequests", incrementedValue)
                                         editor.apply()
 
-                                        if (incrementedValue == 2) {
+                                        if (incrementedValue == 3) {
                                             showReviewDialog()
+                                        }
+
+                                        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+
+                                        val isReviewLaterClicked = sharedPreferences.getBoolean("ReviewLater", false)
+
+                                        val storedTime = sharedPreferences.getLong("ReviewLaterTime", 0)
+                                        val currentTimeMillis = System.currentTimeMillis()
+                                        val timeDifference = currentTimeMillis - storedTime
+
+                                        val oneDayInMillis = 24 * 60 * 60 * 1000
+
+                                        if (timeDifference >= oneDayInMillis) {
+                                            showReviewDialog()
+                                            val currentTimeMillis = System.currentTimeMillis()
+                                            val editor = sharedPreferences.edit()
+                                            editor.putLong("ReviewLaterTime", currentTimeMillis)
+                                            editor.putBoolean("ReviewLater", true)
+                                            editor.apply()
+                                        }
+
+
+                                        if (isReviewLaterClicked) {
+                                            Log.d("CLICKEDD", "WASSS")
+
+
                                         }
 
                                         requestsFlag = true
@@ -756,7 +803,14 @@ class AIChat : AppCompatActivity() {
                                             conversationHistory.put(userMessage)
 
                                             json.put("messages", conversationHistory)
-                                            json.put("model", "gpt-3.5-turbo")
+                                            if (checkedItem == 0) {
+                                                json.put("model", "gpt-3.5-turbo")
+                                                Log.d("GPTVERSION", "gpt-3.5")
+
+                                            } else {
+                                                json.put("model", "gpt-4")
+                                                Log.d("GPTVERSION", "gpt-4")
+                                            }
                                             json.put("max_tokens", 1000)
 
                                             val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
@@ -785,23 +839,82 @@ class AIChat : AppCompatActivity() {
                                                     conversationHistory.put(assistantMessage)
 
                                                     runOnUiThread {
-                                                        listItems.removeAt(listItems.size - 1)
+                                                        if (listItems.isNotEmpty()) {
+                                                            listItems.removeAt(listItems.size - 1)
+                                                        }
                                                         adapter.notifyDataSetChanged()
                                                         textView1.visibility = View.VISIBLE
                                                         textView2.visibility = View.GONE
-                                                        listItems.add(
-                                                            com.ouroboros.aimobileapp.ChatMessage(
-                                                                responseText,
-                                                                true,
-                                                                false,
-                                                                false
+
+                                                        if (responseText.contains("```")) {
+
+                                                            val splitByTripleBackticks =
+                                                                responseText.split("```")
+
+                                                            splitByTripleBackticks.forEachIndexed { index, content ->
+                                                                val trimmedContent = content.trim()
+                                                                if (trimmedContent.isNotEmpty()) {
+                                                                    if (index % 2 == 0) {
+                                                                        // Non-Wrapped content
+                                                                        Log.d(
+                                                                            "Non-Wrapped:",
+                                                                            trimmedContent
+                                                                        )
+                                                                        listItems.add(
+                                                                            com.ouroboros.aimobileapp.ChatMessage(
+                                                                                trimmedContent,
+                                                                                false,
+                                                                                true,
+                                                                                false,
+                                                                                false,
+                                                                                false
+                                                                            )
+                                                                        )
+
+                                                                        adapter.notifyDataSetChanged()
+                                                                    } else {
+                                                                        // Wrapped content
+                                                                        Log.d(
+                                                                            "Wrapped:",
+                                                                            trimmedContent
+                                                                        )
+                                                                        listItems.add(
+                                                                            com.ouroboros.aimobileapp.ChatMessage(
+                                                                                trimmedContent,
+                                                                                true,
+                                                                                false,
+                                                                                true,
+                                                                                false,
+                                                                                false
+                                                                            )
+                                                                        )
+
+                                                                        adapter.notifyDataSetChanged()
+
+                                                                    }
+                                                                }
+                                                            }
+                                                        } else {
+                                                            listItems.add(
+                                                                com.ouroboros.aimobileapp.ChatMessage(
+                                                                    responseText,
+                                                                    false,
+                                                                    false,
+                                                                    true,
+                                                                    false,
+                                                                    false
+                                                                )
                                                             )
-                                                        )
+
+                                                            adapter.notifyDataSetChanged()
+                                                        }
+
+
+
+
                                                         saveCurrentConversation()
                                                         val content = loadConversations()
                                                         println(content)
-
-                                                        adapter.notifyDataSetChanged()
 
                                                         val listView = findViewById<ListView>(com.ouroboros.aimobileapp.R.id.messageList)
                                                         listView.post {

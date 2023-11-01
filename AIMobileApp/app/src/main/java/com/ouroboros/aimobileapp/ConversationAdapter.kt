@@ -3,6 +3,10 @@ package com.ouroboros.aimobileapp
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -75,6 +79,8 @@ class ConversationAdapter(
         if (item is Conversation) {
             val messageTextView = view.findViewById<TextView>(R.id.messageTextView)
             val timestamp = view.findViewById<TextView>(R.id.timeStamp)
+
+
             var displayMessage = item.message
             if (displayMessage.length > 63) {
                 displayMessage = displayMessage.substring(0, 60) + "..."
@@ -83,7 +89,39 @@ class ConversationAdapter(
             if (displayMessage.last() == ' ') {
                 displayMessage = displayMessage.dropLast(1)
             }
-            messageTextView?.text = displayMessage
+
+            var modifiedMessage = displayMessage
+
+            val stringPattern = "`([^`]+)`".toRegex()
+            val matches = stringPattern.findAll(displayMessage).toList()
+
+            matches.reversed().forEach { matchResult ->
+                // Get the content without the backticks
+                val contentWithoutBackticks = matchResult.groups[1]?.value ?: ""
+
+                // Replace the original content (with backticks) in the modified message
+                modifiedMessage = modifiedMessage.replaceRange(matchResult.range, contentWithoutBackticks)
+            }
+
+            val spannable = SpannableString(modifiedMessage)
+
+            matches.forEach { matchResult ->
+                val contentWithoutBackticks = matchResult.groups[1]?.value ?: ""
+
+                val start = modifiedMessage.indexOf(contentWithoutBackticks)
+
+                if (start != -1) {
+                    val end = start + contentWithoutBackticks.length
+
+                    val boldSpan = StyleSpan(Typeface.BOLD)
+                    spannable.setSpan(boldSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            }
+
+
+            messageTextView?.text = spannable
+
+
             timestamp.text = formatDateForDisplay(item.timestamp)
 
             val binLayout = view.findViewById<LinearLayout>(R.id.bin)
