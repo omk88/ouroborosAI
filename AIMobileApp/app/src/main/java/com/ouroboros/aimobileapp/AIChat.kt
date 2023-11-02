@@ -76,6 +76,7 @@ class AIChat : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
     private var checkedItem = 0
+    private var typing = false
 
     private val PREFERENCES_NAME = "user_prefs"
     private val SELECTED_CHOICE_KEY = "selected_choice_key"
@@ -200,29 +201,29 @@ class AIChat : AppCompatActivity() {
 
         val send = findViewById<ImageView>(com.ouroboros.aimobileapp.R.id.send)
         send.setOnClickListener {
-            /*if (pulse.isRunning) {
-                pulse.end()
+
+            if (editText.text.toString() != " " && editText.text.toString() != "" && !typing) {
+                narrateImageView.clearAnimation()
+                narrateImageView.translationY = 0f
+                addItem(true)
+
+                val sendMessageIcon = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.sendMessageIcon)
+                val sendMessageTextBox = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.sendMessageTextBox)
+                val sendMessageContainer = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.sendMessageContainer)
+
+                sendMessageIcon.visibility = View.VISIBLE
+                sendMessageTextBox.visibility = View.VISIBLE
+                sendMessageContainer.visibility = View.VISIBLE
+
+                val bin = findViewById<ImageView>(com.ouroboros.aimobileapp.R.id.bin)
+                val narratedText = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.narratedText)
+                val send = findViewById<ImageView>(com.ouroboros.aimobileapp.R.id.send)
+
+                bin.visibility = View.GONE
+                narratedText.visibility = View.GONE
+                send.visibility = View.GONE
             }
-            pulse.cancel()*/
-            narrateImageView.clearAnimation()
-            narrateImageView.translationY = 0f
-            addItem(true)
 
-            val sendMessageIcon = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.sendMessageIcon)
-            val sendMessageTextBox = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.sendMessageTextBox)
-            val sendMessageContainer = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.sendMessageContainer)
-
-            sendMessageIcon.visibility = View.VISIBLE
-            sendMessageTextBox.visibility = View.VISIBLE
-            sendMessageContainer.visibility = View.VISIBLE
-
-            val bin = findViewById<ImageView>(com.ouroboros.aimobileapp.R.id.bin)
-            val narratedText = findViewById<LinearLayout>(com.ouroboros.aimobileapp.R.id.narratedText)
-            val send = findViewById<ImageView>(com.ouroboros.aimobileapp.R.id.send)
-
-            bin.visibility = View.GONE
-            narratedText.visibility = View.GONE
-            send.visibility = View.GONE
         }
 
 
@@ -427,7 +428,10 @@ class AIChat : AppCompatActivity() {
 
 
         button.setOnClickListener {
-            addItem(false)
+            if (editText.text.toString() != " " && editText.text.toString() != "" && !typing) {
+
+                addItem(false)
+            }
         }
     }
 
@@ -453,8 +457,7 @@ class AIChat : AppCompatActivity() {
     private fun showRadioGroupMenu() {
         val items = arrayOf("GPT-3.5", "GPT-4")
 
-        // Load the saved choice from SharedPreferences
-        checkedItem = sharedPreferences.getInt(SELECTED_CHOICE_KEY, 0) // Default to 0 if not found
+        checkedItem = sharedPreferences.getInt(SELECTED_CHOICE_KEY, 0)
 
         AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
             .setTitle("Style")
@@ -462,7 +465,6 @@ class AIChat : AppCompatActivity() {
                 checkedItem = which
             }
             .setPositiveButton("OK") { dialog, _ ->
-                // Save the selected choice to SharedPreferences
                 sharedPreferences.edit().putInt(SELECTED_CHOICE_KEY, checkedItem).apply()
 
                 Toast.makeText(this, "Selected: ${items[checkedItem]}", Toast.LENGTH_SHORT).show()
@@ -497,7 +499,6 @@ class AIChat : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         recognizer.destroy()
-        //pulse.cancel()
     }
 
     private fun loadCurrentConversation() {
@@ -547,6 +548,7 @@ class AIChat : AppCompatActivity() {
         textView2.visibility = View.VISIBLE
         listItems.add(com.ouroboros.aimobileapp.ChatMessage(text, false, false, false, false, false))
         listItems.add(com.ouroboros.aimobileapp.ChatMessage(text, false, false, false, true, false))
+        typing = true
         saveCurrentConversation()
 
         adapter.notifyDataSetChanged()
@@ -758,9 +760,6 @@ class AIChat : AppCompatActivity() {
                                         editor.putInt("APIRequests", incrementedValue)
                                         editor.apply()
 
-                                        if (incrementedValue == 3) {
-                                            showReviewDialog()
-                                        }
 
                                         val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
 
@@ -773,13 +772,15 @@ class AIChat : AppCompatActivity() {
 
                                         val oneDayInMillis = 24 * 60 * 60 * 1000
 
-                                        if (timeDifference >= oneDayInMillis) {
+                                        if (timeDifference >= oneDayInMillis && storedTime.toInt() != 0) {
                                             showReviewDialog()
                                             val currentTimeMillis = System.currentTimeMillis()
                                             val editor = sharedPreferences.edit()
                                             editor.putLong("ReviewLaterTime", currentTimeMillis)
                                             editor.putBoolean("ReviewLater", true)
                                             editor.apply()
+                                        } else if (incrementedValue == 3) {
+                                            showReviewDialog()
                                         }
 
 
@@ -840,6 +841,7 @@ class AIChat : AppCompatActivity() {
 
                                                     runOnUiThread {
                                                         if (listItems.isNotEmpty()) {
+                                                            typing = false
                                                             listItems.removeAt(listItems.size - 1)
                                                         }
                                                         adapter.notifyDataSetChanged()

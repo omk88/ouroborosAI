@@ -13,7 +13,6 @@
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:clipChildren="false"
-        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical">
@@ -21,7 +20,6 @@
         <LinearLayout
             android:weightSum="2"
             android:clipChildren="false"
-            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:orientation="horizontal">
@@ -30,7 +28,6 @@
                 android:gravity="center"
                 android:layout_weight="1"
                 android:clipChildren="false"
-                android:clipToPadding="false"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -63,7 +60,6 @@
                 android:gravity="center"
                 android:layout_weight="1"
                 android:clipChildren="false"
-                android:clipToPadding="false"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">

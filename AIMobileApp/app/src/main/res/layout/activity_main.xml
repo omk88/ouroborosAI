@@ -82,17 +82,18 @@
         </LinearLayout>
 
         <LinearLayout
+            android:weightSum="2"
             android:gravity="center"
             android:id="@+id/linearLayout23"
             android:layout_width="match_parent"
             android:layout_height="45dp">
 
             <LinearLayout
+                android:gravity="center"
+                android:layout_weight="1"
                 android:id="@+id/button_start_activity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/plus"
@@ -102,7 +103,6 @@
                     android:src="@drawable/plus" />
 
                 <TextView
-                    android:layout_marginRight="5dp"
                     android:fontFamily="@font/poppins_regular"
                     android:id="@+id/newConvo"
                     android:layout_width="wrap_content"
@@ -116,12 +116,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:gravity="center"
+                android:layout_weight="1"
                 android:id="@+id/generateImg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_marginLeft="5dp"
                     android:id="@+id/image"
                     android:layout_width="35dp"
                     android:layout_height="match_parent"

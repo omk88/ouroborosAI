@@ -19,6 +19,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:visibility="visible"
                 android:paddingLeft="40dp"
                 android:paddingRight="40dp"
                 android:paddingTop="90dp"
@@ -28,13 +29,24 @@
                 android:layout_height="130dp"
                 android:src="@drawable/anim_logo" />
 
+            <ImageView
+                android:visibility="gone"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="90dp"
+                android:layout_gravity="bottom"
+                android:id="@+id/fixed_logo"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:src="@drawable/fixed_logo" />
+
         </LinearLayout>
 
         <ImageView
             android:scaleType="centerCrop"
             android:paddingLeft="200dp"
             android:paddingRight="200dp"
-            android:paddingBottom="100dp"
+            android:paddingBottom="127dp"
             android:layout_weight="0.5"
             android:id="@+id/logo"
             android:layout_width="match_parent"

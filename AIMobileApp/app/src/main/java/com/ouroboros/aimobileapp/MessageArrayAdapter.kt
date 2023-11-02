@@ -161,15 +161,15 @@ class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMes
                 first = item.message.trim().split(Regex("\\s+")).first()
             }
 
-            Log.d("MOSSAGE", item.message)
-            Log.d("MOSSAGE", first)
-
 
             val codeList = listOf("python", "java", "javascript", "c", "cpp", "csharp", "php", "ruby", "swift",
                 "kotlin", "go", "rust", "typescript", "matlab", "r", "haskell", "scala", "perl", "lua",
                 "sql", "html", "css", "bash", "zsh", "dart", "groovy", "objc", "fortran", "cobol", "vhdl",
                 "verilog", "prolog", "scheme", "lisp", "erlang", "elixir", "fsharp", "vbnet", "assembly", "julia",
                 "elm", "pascal", "racket", "vb", "javac")
+
+            val capCodeList = codeList.map { it.capitalize() }
+
 
 
             if (first.lowercase() in codeList) {
@@ -198,7 +198,7 @@ class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMes
             if (textView != null) {
                 //cleanedMessage = cleanedMessage.replaceFirst("java", "").trimStart()
 
-                if (item.message.trim().split(Regex("\\s+")).firstOrNull() in codeList) {
+                if (item.message.trim().split(Regex("\\s+")).firstOrNull() in codeList || item.message.trim().split(Regex("\\s+")).firstOrNull() in capCodeList) {
                     var cleanedMessage = item.message.replaceFirst(first, "").trimStart()
 
                     val spannable = SpannableString(cleanedMessage)
@@ -212,7 +212,7 @@ class MessageArrayAdapter(context: Context, private val items: ArrayList<ChatMes
                     val YELLOW_COLOR = Color.parseColor("#FCFF21")
 
                     val orangeWords = listOf("for", "while", "in", "import", "true", "false", "var", "if", "else", "try", "except", "return", "def")
-                    val purpleWords = listOf("print", "byte", "int", "short", "long", "float", "char", "double", "args")
+                    val purpleWords = listOf("input","print", "byte", "int", "short", "long", "float", "char", "double", "args")
                     val blueWords = listOf("static", "void", "private", "protected", "public", "class")
                     val yellowWords = listOf(", ")
 

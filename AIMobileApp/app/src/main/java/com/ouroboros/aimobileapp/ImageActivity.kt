@@ -553,6 +553,8 @@ class ImageActivity: AppCompatActivity() {
     private fun showRadioGroupMenu() {
         val items = arrayOf("Imagine V5", "Anime V5", "Imagine V4.1", "Imagine V4(Creative)", "Imagine V4", "Imagine V3", "Imagine V1", "Realistic", "Anime", "Portrait", "SDXL 1.0")
 
+        checkedItem = loadCheckedItemFromPreferences()  // Load the saved value when you're about to show the dialog
+
         AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
             .setTitle("Style")
             .setSingleChoiceItems(items, checkedItem) { dialog, which ->
@@ -560,11 +562,25 @@ class ImageActivity: AppCompatActivity() {
             }
             .setPositiveButton("OK") { dialog, _ ->
                 Toast.makeText(this, "Selected: ${items[checkedItem]}", Toast.LENGTH_SHORT).show()
+                saveCheckedItemToPreferences(checkedItem)  // Save the user's choice when "OK" is clicked
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
+
+    private fun loadCheckedItemFromPreferences(): Int {
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("checked_item_key", 0)
+    }
+
+    private fun saveCheckedItemToPreferences(checkedItem: Int) {
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("checked_item_key", checkedItem)
+        editor.apply()
+    }
+
 
 
     private fun savePromptHint1(hint: String) {
@@ -906,6 +922,11 @@ class ImageActivity: AppCompatActivity() {
 
 
                                             } else {
+                                                val largeLoading: ImageView = findViewById(R.id.largeLoading)
+
+                                                largeLoading.visibility = View.GONE
+                                                instruction.setText("Couldn't establish connection to API. Try again later.")
+                                                instruction.visibility = View.VISIBLE
                                             }
 
 
@@ -1082,8 +1103,7 @@ class ImageActivity: AppCompatActivity() {
                                                 response: Response<ResponseBody>
                                             ) {
                                                 val imageBytes = response.body()?.bytes()
-                                                val imagePath =
-                                                    saveBitmapToFile(imageBytes, this@ImageActivity)
+                                                val imagePath = saveBitmapToFile(imageBytes, this@ImageActivity)
 
                                                 if (imagePath != null) {
                                                     newImageUrls1.add(imagePath)
@@ -1153,15 +1173,31 @@ class ImageActivity: AppCompatActivity() {
 
 
     fun saveBitmapToFile(imageBytes: ByteArray?, context: Context): String? {
-        Log.d("CALLEDDD", "CALLEDDD")
-        // Convert the image bytes into a bitmap
-        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes?.size ?: 0)
+        if (imageBytes == null || imageBytes.isEmpty()) {
 
-        // Create a unique file name using the current timestamp
+            val largeLoading: ImageView = findViewById(R.id.largeLoading)
+
+            largeLoading.visibility = View.GONE
+            instruction.setText("Couldn't establish connection to API. Try again later.")
+            instruction.visibility = View.VISIBLE
+
+            return null
+        }
+
+        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        if (bitmap == null) {
+            val largeLoading: ImageView = findViewById(R.id.largeLoading)
+
+            largeLoading.visibility = View.GONE
+            instruction.setText("Couldn't establish connection to API. Try again later.")
+            instruction.visibility = View.VISIBLE
+
+            return null
+        }
+
         val fileName = "img_${System.currentTimeMillis()}.jpg"
         val file = File(context.cacheDir, fileName)
 
-        // Write the bitmap to a file
         try {
             val outputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -1174,6 +1210,7 @@ class ImageActivity: AppCompatActivity() {
 
         return file.absolutePath
     }
+
 
     fun updateListViewWithNewImages(prompt: String) {
 

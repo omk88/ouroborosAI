@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StyleSpan
@@ -27,6 +29,7 @@ class ConversationAdapter(
     private val dataSource: ArrayList<Any>,
     private val onConversationRemoveListener: OnConversationRemoveListener,
     private val instructionTextView: TextView
+
 ) : BaseAdapter() {
 
     interface OnConversationRemoveListener {
@@ -39,6 +42,8 @@ class ConversationAdapter(
         private const val TYPE_LAST_7_DAYS_DIVIDER = 2
         private const val TYPE_30_DAYS_DIVIDER = 3
     }
+
+    var isInteractionBlocked: Boolean = false
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -124,36 +129,60 @@ class ConversationAdapter(
 
             timestamp.text = formatDateForDisplay(item.timestamp)
 
-            val binLayout = view.findViewById<LinearLayout>(R.id.bin)
-            binLayout?.setOnClickListener {
-                val fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
-                val translateUp = AnimationUtils.loadAnimation(context, R.anim.translate_up)
-                fadeOut.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationStart(animation: Animation?) {}
-                    override fun onAnimationEnd(animation: Animation?) {
-                        dataSource.removeAt(position)
-                        onConversationRemoveListener.onRemove(item)
-                        notifyDataSetChanged()
+            var flag = false
 
-                        if (dataSource.isEmpty()) {
-                            instructionTextView.visibility = View.VISIBLE
+            val binLayout = view.findViewById<LinearLayout>(R.id.bin)
+
+
+            binLayout?.setOnClickListener {
+                if (flag) return@setOnClickListener
+                isInteractionBlocked = true
+
+                val translateUp = AnimationUtils.loadAnimation(context, R.anim.translate_up)
+
+
+                flag = true
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
+                    fadeOut.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationStart(animation: Animation?) {}
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            isInteractionBlocked = false
+                            dataSource.removeAt(position)
+                            onConversationRemoveListener.onRemove(item)
+                            notifyDataSetChanged()
+
+                            if (dataSource.isEmpty()) {
+                                instructionTextView.visibility = View.VISIBLE
+                            }
                         }
+
+                        override fun onAnimationRepeat(animation: Animation?) {}
+                    })
+
+                    view.startAnimation(fadeOut)
+
+                    val listView = parent as ListView
+                    for (i in position + 1 until listView.childCount) {
+                        val child = listView.getChildAt(i)
+                        child?.startAnimation(translateUp)
                     }
-                    override fun onAnimationRepeat(animation: Animation?) {}
-                })
-                view.startAnimation(fadeOut)
-                val listView = parent as ListView
-                for (i in position + 1 until listView.childCount) {
-                    val child = listView.getChildAt(i)
-                    child?.startAnimation(translateUp)
+                }, 200)
+            }
+
+
+
+
+            view.setOnClickListener {
+                if (!isInteractionBlocked) {
+                    val intent = Intent(context, com.ouroboros.aimobileapp.AIChat::class.java)
+                    intent.putExtra("conversation", item.code)
+                    context.startActivity(intent)
+                    (context as Activity).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                 }
             }
-            view.setOnClickListener {
-                val intent = Intent(context, com.ouroboros.aimobileapp.AIChat::class.java)
-                intent.putExtra("conversation", item.code)
-                context.startActivity(intent)
-                (context as Activity).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-            }
+
         }
         return view
     }
@@ -176,7 +205,7 @@ class ConversationAdapter(
         if (truncated.last() == ' ') {
             truncated = truncated.trimEnd()
         }
-        return "$truncated..."
+        return "$truncated...`"
     }
 
     enum class DividerType {

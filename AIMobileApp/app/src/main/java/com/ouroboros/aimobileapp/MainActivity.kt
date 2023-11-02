@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemo
                         val updatedUserCredits = UserCredits(credits.toInt())
                         saveCreditsToFile(this, updatedUserCredits)
 
-                        if (credits.toInt() <= 10) {
+                        if (credits.toInt() <= 5) {
                             if (!isPurchase) {
                                 checkSubscriptionAndStartActivity()
                             }
@@ -251,8 +251,11 @@ class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemo
                         val updatedUserCredits = UserCredits(credits.toInt())
                         saveCreditsToFile(this, updatedUserCredits)
 
-                        if (credits.toInt() <= 10 && signInState != SignInState.SIGNED_IN_NO_CREDITS) {
-                            launchPurchaseActivity()
+                        if (credits.toInt() <= 5 && signInState != SignInState.SIGNED_IN_NO_CREDITS) {
+                            if (intent.getStringExtra("splash") == "splash") {
+                                launchPurchaseActivity()
+                            }
+
                         } else {
                             signInState = SignInState.SIGNED_IN_WITH_CREDITS
                         }
@@ -325,7 +328,7 @@ class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemo
                     val updatedUserCredits = UserCredits(credits.toInt())
                     saveCreditsToFile(this, updatedUserCredits)
 
-                    if (credits.toInt() <= 10) {
+                    if (credits.toInt() <= 5) {
                         if (!isPurchase) {
                             checkSubscriptionAndStartActivity()
 
@@ -362,25 +365,31 @@ class MainActivity : AppCompatActivity(), ConversationAdapter.OnConversationRemo
                     checkSubscriptionType { subscriptionType ->
                         runOnUiThread {
                             if (subscriptionType == "monthly" || subscriptionType == "yearly") {
-                                // Start PurchaseActivity2
-                                val intent =
-                                    Intent(this@MainActivity, PurchaseActivity2::class.java)
-                                startActivity(intent)
+                                if (intent.getStringExtra("splash") == "splash") {
+                                    val intent =
+                                        Intent(this@MainActivity, PurchaseActivity2::class.java)
+                                    startActivity(intent)
+                                }
                             } else {
-                                // Start PurchaseActivity
-                                val intent = Intent(this@MainActivity, PurchaseActivity::class.java)
-                                startActivity(intent)
+                                if (intent.getStringExtra("splash") == "splash") {
+                                    val intent = Intent(this@MainActivity, PurchaseActivity::class.java)
+                                    startActivity(intent)
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                                    isPurchase = true
+                                }
                             }
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                            isPurchase = true
+
                         }
                     }
                 } else {
                     runOnUiThread {
-                        val intent = Intent(this@MainActivity, PurchaseActivity::class.java)
-                        startActivity(intent)
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                        isPurchase = true
+                        if (intent.getStringExtra("splash") == "splash") {
+                            val intent = Intent(this@MainActivity, PurchaseActivity::class.java)
+                            startActivity(intent)
+
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                            isPurchase = true
+                        }
                     }
                 }
             }
