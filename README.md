@@ -2,11 +2,9 @@
   <img src="https://github.com/omk88/ouroborosAI/assets/46501575/e654aac9-a60e-41b6-a973-d8408d1f0d0b">
 </p>
 
-<font size="+10">
-  <p align="center" >
-    Ouroboros AI
-  </p>
-</font>
+<p align="center" >
+  <font size = "20">Ouroboros AI</font>
+</p>
 
 
 
