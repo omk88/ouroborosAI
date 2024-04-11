@@ -3,7 +3,9 @@
 </p>
 
 <p align="center">
-  <b> Ouroboros AI </b>
+  <font size = 20>
+    <b> Ouroboros AI </b>
+  </font>
 </p>
 
 
