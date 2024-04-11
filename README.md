@@ -4,8 +4,10 @@
 
 <h2 align="center" >
   Ouroboros AI
-  [Link to app](https://play.google.com/store/apps/details?id=com.ouroboros.aimobileapp "Link to App")
 </h2>
+
+[Link to app](https://play.google.com/store/apps/details?id=com.ouroboros.aimobileapp "Link to App")
+
 
 
 
