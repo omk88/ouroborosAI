@@ -35,6 +35,8 @@ Ouroboros AI is an AI chatbot, image generator and image editor application for 
   3. Generates code in a suitable structure in various different programming languages if requested.
 
   4. Users can input images from their gallery or take new ones using the camera icon which can then be interpreted by the chatbot.
+
+- App saved previous conversations to load them again whenever needed.
  
 - Users can purchase monthly or yearly subscriptions that are managed by the Google payments API.
   
