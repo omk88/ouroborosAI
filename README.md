@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <span style="font-size:20em;">Text goes here</span>
+  ##Ouroboros AI
 </p>
 
 
