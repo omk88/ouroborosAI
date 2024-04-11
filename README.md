@@ -12,13 +12,33 @@ Ouroboros AI is an AI chatbot, image generator and image editor application for 
 
 ## Features
 
+- Account authentication with the users Gmail account. Managed by Firebase.
+  
 - Image generation using AI APIs (Image, Dall-E, Stable Diffusion)
 
 - AI image editting features:
 
-  1. Expanding the canvas of an image and generating new AI content based on input from that particular image and a user given prompt.
+  1. The ability to expand the canvas of an image and generating new AI content based on input from that particular image and a user given prompt.
   
-  2. Erasing sections of an image by drawing and generating new AI content based on input from the image and a user given prompt.
+  2. The ability to erase sections of an image by drawing and generating new AI content based on input from the image and a user given prompt.
+     
+  3. The ability to upscale images using AI to make them higher resolution.
+
+  4. Undo/redo and download buttons.
+ 
+- Chatbot features:
+
+  1. Allows users to switch between different models (GPT-4, GPT-3.5).
+
+  2. Provides answers based on the users prompts.
+
+  3. Generates code in a suitable structure in various different programming languages if requested.
+
+  4. Users can input images from their gallery or take new ones using the camera icon which can then be interpreted by the chatbot.
+ 
+- Users can purchase monthly or yearly subscriptions that are managed by the Google payments API.
+  
+- Users can purchase different quantities of credits.
 
 ## Screenshots
 <img src=https://github.com/omk88/ouroborosAI/assets/46501575/9a4ccd6a-7ab5-45a5-a8e5-92f832cedc28 width="319" height="630.02">
