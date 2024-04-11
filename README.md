@@ -16,9 +16,9 @@ Ouroboros AI is an AI chatbot, image generator and image editor application for 
 
 - AI image editting features:
 
-  • Expanding the canvas of an image and generating new AI content based on input from that particular image and a user given prompt.
+  1. Expanding the canvas of an image and generating new AI content based on input from that particular image and a user given prompt.
   
-  • Erasing sections of an image by drawing and generating new AI content based on input from the image and a user given prompt.
+  2. Erasing sections of an image by drawing and generating new AI content based on input from the image and a user given prompt.
 
 ## Screenshots
 <img src=https://github.com/omk88/ouroborosAI/assets/46501575/9a4ccd6a-7ab5-45a5-a8e5-92f832cedc28 width="319" height="630.02">
