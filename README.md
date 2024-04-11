@@ -2,9 +2,8 @@
   <img src="https://github.com/omk88/ouroborosAI/assets/46501575/e654aac9-a60e-41b6-a973-d8408d1f0d0b">
 </p>
 
-<p align="center">
-  <h1 style="font-size:4em; "> Hello World! </h1>
-
+<p align="center" style="font-size:4em; ">
+  Hello World!
 </p>
 
 
