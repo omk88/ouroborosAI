@@ -1,6 +1,6 @@
-<img src=https://github.com/omk88/ouroborosAI/assets/46501575/e654aac9-a60e-41b6-a973-d8408d1f0d0b align="center">
-
-
+<p align="center">
+  <img src="https://github.com/omk88/ouroborosAI/assets/46501575/e654aac9-a60e-41b6-a973-d8408d1f0d0b">
+</p>
 
 
 # Ouroboros AI
