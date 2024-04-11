@@ -1,5 +1,5 @@
 # ouroborosAI
-<div style="margin-right: 10px;">
+<div style="margin-right: 30px;">
 
   <img src=https://github.com/omk88/ouroborosAI/assets/46501575/9a4ccd6a-7ab5-45a5-a8e5-92f832cedc28 width="319" height="630.02">
 
