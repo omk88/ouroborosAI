@@ -3,13 +3,11 @@
 </p>
 
 <h2 align="center" >
-  Ouroboros AI\n\
-  <a href="https://play.google.com/store/apps/details?id=com.ouroboros.aimobileapp">link text</a>
+  Ouroboros AI
+  
+  <a href="https://play.google.com/store/apps/details?id=com.ouroboros.aimobileapp">Download Android App ></a>
 
 </h2>
-
-[Link to Android App](https://play.google.com/store/apps/details?id=com.ouroboros.aimobileapp "Link to App")
-
 
 
 
