@@ -2,7 +2,7 @@
   <img src="https://github.com/omk88/ouroborosAI/assets/46501575/e654aac9-a60e-41b6-a973-d8408d1f0d0b">
 </p>
 
-<p align="center" size=5>
+<p align="center" font-size:large;>
   Ouroboros AI
 </p>
 
