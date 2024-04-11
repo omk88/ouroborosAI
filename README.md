@@ -1,3 +1,8 @@
+
+
+![xxxhdpi](https://github.com/omk88/ouroborosAI/assets/46501575/e654aac9-a60e-41b6-a973-d8408d1f0d0b)
+
+
 # Ouroboros AI
 Ouroboros AI is an AI chatbot, image generator and image editor application for android. It uses various AI APIs, including Dall-E, Stable Diffusion, Imagine and GPT-4 to generate content for the user to engage with. Users can purchase monthly or yearly subscriptions or quantities of credits that allow users to generate AI content. Payments are managed by the Google Payments API and user data is saved in Firestore with Firebase. The chatbot feature allows users to get answers to questions they have, generate code and even upload images (or take them with the camera) that can be interpreted by the AI.
 
