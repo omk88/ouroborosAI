@@ -3,9 +3,8 @@
 </p>
 
 <p align="center">
-  <font size = 20>
-    <b> Ouroboros AI </b>
-  </font>
+  <h1 style="font-size:4em; "> Hello World! </h1>
+
 </p>
 
 
