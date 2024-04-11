@@ -3,7 +3,7 @@
 </p>
 
 <h2 align="center" >
-  Ouroboros AI
+  Ouroboros AI\n\
   <a href="https://play.google.com/store/apps/details?id=com.ouroboros.aimobileapp">link text</a>
 
 </h2>
