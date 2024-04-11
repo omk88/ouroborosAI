@@ -1,5 +1,5 @@
 # Ouroboros AI
-
+Ouroboros AI is an AI chatbot, image generator and image editor application for android. It uses various AI APIs, including Dall-E, Stable Diffusion, GPT-4, 
 
 ## Screenshots
 <img src=https://github.com/omk88/ouroborosAI/assets/46501575/9a4ccd6a-7ab5-45a5-a8e5-92f832cedc28 width="319" height="630.02">
