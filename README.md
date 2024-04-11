@@ -1,6 +1,6 @@
 # ouroborosAI
 
-<img src=https://github.com/omk88/ouroborosAI/assets/46501575/9a4ccd6a-7ab5-45a5-a8e5-92f832cedc28 width="300" height="500">
+<img src=https://github.com/omk88/ouroborosAI/assets/46501575/9a4ccd6a-7ab5-45a5-a8e5-92f832cedc28 width="319" height="630">
 <img src=https://github.com/omk88/ouroborosAI/assets/46501575/b00974f0-1265-48de-a26e-b2cc2b985e76 width="400" height="790">
 <img src=https://github.com/omk88/ouroborosAI/assets/46501575/86b74c04-8683-4a57-a23b-2e32eb8e3ee4 width="400" height="790">
 <img src=https://github.com/omk88/ouroborosAI/assets/46501575/851efa8f-feac-4581-86e6-afcf7cd57264 width="400" height="790">
